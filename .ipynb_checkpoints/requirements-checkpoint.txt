@@ -1,0 +1,13 @@
+streamlit
+pandas
+numpy
+matplotlib
+altair
+plotly
+openpyxl
+datetime
+streamlit_shadcn_ui
+streamlit_extras
+streamlit_option_menu
+Pillow
+PIL

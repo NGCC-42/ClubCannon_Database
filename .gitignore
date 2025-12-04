@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Streamlit secrets
+.streamlit/credentials.toml
+.streamlit/secrets.toml
+
+# Local data files (optional)
+data/*.xlsx
+data/*.csv
+data/*.parquet
+
+# Environment files
+.env
+
