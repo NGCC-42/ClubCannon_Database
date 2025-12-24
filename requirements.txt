@@ -8,4 +8,4 @@ openpyxl
 Pillow
 streamlit-shadcn-ui
 streamlit-extras
-streamlit-options-menu
+streamlit-option-menu
