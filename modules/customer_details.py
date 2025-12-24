@@ -11,12 +11,12 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import openpyxl
 import streamlit_shadcn_ui as ui
-from streamlit_extras.metric_cards import style_metric_cards
+#from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_option_menu import option_menu
 #from fpdf import FPDF
 #import base64
 
-#from data.load import load_all_data
+from data.load import load_all_data
 from logic.analytics import (
     hist_cust_data,
     percent_of_change
