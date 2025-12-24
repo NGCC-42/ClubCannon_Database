@@ -20,23 +20,36 @@ from data.load import load_all_data
 
 
 
-
+# ----------------------------------------------
 # MAKE VARIABLES FOR REAL TIME DATA CALCULATIONS
+# ----------------------------------------------
+
 today = datetime.now()
 one_year_ago = today - timedelta(days=365)
 two_years_ago = today - timedelta(days=730)
 three_years_ago = today - timedelta(days=1095)
 four_years_ago = today - timedelta(days=1460)
 
-### CREATE DATE LISTS ###
+# -----------------
+# CREATE DATE LISTS 
+# -----------------
 
 months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 months_x = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 years = ['2022', '2023', '2024', '2025', '2026']
 
+
+# --------------------
+# MAKE DATA ACCESSIBLE
+# --------------------
+
 df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist, unique_customer_list, master_customer_list, wholesale_list = load_all_data()
 
-### DEFINE A FUNCTION TO CALCULATE AND DISPLAY CHANGE IN CUSTOMER SPENDING ###
+
+# --------------------------------------------------
+# DEFINE A FUNCTION TO CALCULATE AND DISPLAY A DELTA
+# --------------------------------------------------
+
 @st.cache_data
 def percent_of_change(num1, num2):
     
@@ -53,7 +66,10 @@ def percent_of_change(num1, num2):
     return '{}{:,.2f}% from last year'.format(v, perc_change)
 
 
-### DEFINE A FUNCTION TO CALCULATE PERCENTAGE OF A TOTAL ###
+# ----------------------------------------------------
+# DEFINE A FUNCTION TO CALCULATE PERCENTAGE OF A TOTAL 
+# ----------------------------------------------------
+
 def percent_of_sales(type1, type2):
 
     total = type1 + type2
@@ -66,15 +82,21 @@ def percent_of_sales(type1, type2):
     return answer
 
 
-### DEFINE A FUNCTION TO CONVERT MONTH STRING TO NUMERICAL
+# ------------------------------------------------------
+# DEFINE A FUNCTION TO CONVERT MONTH STRING TO NUMERICAL
+# ------------------------------------------------------
+
 def month_to_num(month):
     months = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
     ]
     return (months.index(month) + 1)
-        
-### DEFINE A FUNCTION TO CONVERT NUMERICAL MONTH TO STRING MONTH NAME
+
+# -----------------------------------------------------------------
+# DEFINE A FUNCTION TO CONVERT NUMERICAL MONTH TO STRING MONTH NAME
+# -----------------------------------------------------------------
+
 def num_to_month(month_num):
     months = [
         "January", "February", "March", "April", "May", "June",
@@ -82,6 +104,10 @@ def num_to_month(month_num):
     ]
     return months[month_num - 1]
 
+
+# -------------------------------------------------------------
+# FUNCTION TO EXTRACT MONTHLY SALES DATA / WHOLESALE VS. RETAIL
+# -------------------------------------------------------------
 
 @st.cache_data
 def get_monthly_sales_wvr(df, year):
@@ -113,12 +139,19 @@ def get_monthly_sales_wvr(df, year):
 
     return sales_dict
 
-### FUNCTION TO MAKE THE BEGINNING OF A YEAR A VARIABLE
+
+# ---------------------------------------------------
+# FUNCTION TO MAKE THE BEGINNING OF A YEAR A VARIABLE
+# ---------------------------------------------------
+
 def beginning_of_year(dt: datetime) -> datetime:
     return datetime(dt.year, 1, 1)
 
 
-### MONTHLY SALES YEAR TO DATE WITH WHOLESALE V. RETAIL SALES
+# ----------------------------------------------------------
+# MONTHLY SALES YEAR TO DATE WITH WHOLESALE VS. RETAIL SALES
+# ----------------------------------------------------------
+
 @st.cache_data
 def get_monthly_sales_wvr_ytd():
 
@@ -156,7 +189,10 @@ def get_monthly_sales_wvr_ytd():
     return sales_dict, sales_dict_minus1, sales_dict_minus2
 
 
-### FOR DASHBOARD - GENERATE DICTIONARY OF MONTHLY SALES ###  
+# ----------------------------------------------------
+# GENERATE DICTIONARY OF MONTHLY SALES - FOR DASHBOARD
+# ----------------------------------------------------
+
 @st.cache_data
 def get_monthly_sales_v2(df, year):
     # Ensure 'order_date' is in datetime format
@@ -196,7 +232,11 @@ def get_monthly_sales_v2(df, year):
 
     return sales_dict
 
+
+# -------------------------------------------------------------------
 # CALCULATE YEAR TO DATE MONTHLY SALES FOR CURRENT AND LAST TWO YEARS 
+# -------------------------------------------------------------------
+
 @st.cache_data
 def get_monthly_sales_ytd():
 
@@ -265,7 +305,10 @@ def get_monthly_sales_ytd():
     return sales_dict, sales_dict_minus1, sales_dict_minus2
 
 
+# ----------------------
 # MONTHLY PRODUCT TOTALS
+# ----------------------
+
 @st.cache_data
 def calc_monthly_totals_v2(sales_dict, months=['All']):
     total_sales = 0
@@ -306,7 +349,9 @@ def calc_monthly_totals_v2(sales_dict, months=['All']):
     return total_sales, total_web_perc, total_fulcrum_perc, avg_month, magic_sales
 
 
-### DEFINE A FUNCTION TO EXTRACT DATA FROM SALES DICTIONARY 
+# -------------------------------------------------------
+# DEFINE A FUNCTION TO EXTRACT DATA FROM SALES DICTIONARY 
+# -------------------------------------------------------
 
 @st.cache_data
 def extract_transaction_data(sales_dict, month='All'):
@@ -335,6 +380,10 @@ def extract_transaction_data(sales_dict, month='All'):
             sales_sum_web, sales_sum_fulcrum, sales_sum,
             total_trans_web, total_trans_fulcrum, total_trans]
 
+
+# -------------------------------------------------------------
+# FUNCTION TO CALCULATE METRICS OF HISTORICAL SALES (2013-2022)
+# -------------------------------------------------------------
 
 @st.cache_data
 def calc_hist_metrics(sales_dict1, sales_dict2=None):
@@ -429,8 +478,11 @@ def calc_hist_metrics(sales_dict1, sales_dict2=None):
         sd1_avg_month = sd1_tot / 5
 
         return sd1_tot, sd1_trans_tot, sd1_avg_month, sd1_avg_trans, sd1_wholesale, sd1_retail, sd1_wholesale_trans, sd1_retail_trans, sd1_avg_wholesale_trans, sd1_avg_retail_trans
-    
 
+    
+# ---------------------------------------------------------
+# FUNCTION TO CALCULATE QUARTLY SALES - WEBSITE VS. FULCRUM
+# ---------------------------------------------------------
 
 @st.cache_data
 def quarterly_sales(year):
@@ -477,6 +529,10 @@ def quarterly_sales(year):
     return q1_count, q2_count, q3_count, q4_count
 
 
+# --------------------------------------------------------------------
+# FUNCTION TO CALCULATE WHOLESALE VS. RETAIL TOTALS - CURRENTLY UNUSED
+# --------------------------------------------------------------------
+
 def wholesale_retail_totals(monthly_sales_wVr):
     
     wholesale_totals = 0
@@ -489,6 +545,9 @@ def wholesale_retail_totals(monthly_sales_wVr):
     return wholesale_totals, retail_totals
 
 
+# -------------------------------------------------------------
+# FUNCTION TO CALCULATE REALTIME TO-DATE REVENUE FOR COMPARISON
+# -------------------------------------------------------------
 
 def to_date_revenue(df, today=None):
     """
@@ -550,6 +609,10 @@ def to_date_revenue(df, today=None):
     return results
 
 
+# -----------------------------------------------
+# FUNCTION TO EXTRACT SALES OF MAGIC FX EQUIPMENT
+# -----------------------------------------------
+
 @st.cache_data
 def magic_sales_data():
     
@@ -575,6 +638,10 @@ def magic_sales_data():
         
     return mfx_rev, mfx_costs, mfx_profit
 
+
+# --------------------------------------------------
+# FUNCTION TO EXTRACT DAILY SALES - CURRENTLY UNUSED
+# --------------------------------------------------
 
 def daily_sales(month):
 
@@ -605,10 +672,17 @@ def daily_sales(month):
     return daily_sales23, daily_sales24, daily_sales25
     
 
+# -----------------------------------------------------------
+# ENSURE DATES FROM HISTORICAL DATA ARE FORMATTED IN DATETIME
+# -----------------------------------------------------------
 
 df_hist['order_date'] = pd.to_datetime(df_hist['order_date'])
     
-    
+
+# ----------------------------------------------------------------------------
+# FUNCTION TO EXTRACT HISTORICAL CUSTOMER DATA - PRODUCT & SALES (2013 - 2022) 
+# ----------------------------------------------------------------------------
+
 def hist_cust_data(customer):
     
     target_years = [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022]
@@ -718,6 +792,9 @@ def hist_cust_data(customer):
     return spending_dict, spending_total, jet_dict, handheld_dict, controller_dict, acc_dict
 
 
+# -------------------------------------------------------
+# FUNCTION TO EXTRACT HISTORICAL SALES DATA (2013 - 2022) 
+# -------------------------------------------------------
 
 @st.cache_data
 def hist_annual_sales():
@@ -782,6 +859,10 @@ def hist_annual_sales():
     
     return sales13, sales14, sales15, sales16, sales17, sales18, sales19, sales20, sales21, sales22
 
+
+# --------------------------------------------------------------
+# FUNCTION TO CALCULATE HISTORICAL QUARTERLY SALES (2013 - 2022)
+# --------------------------------------------------------------
 
 @st.cache_data
 def hist_quarterly_sales():

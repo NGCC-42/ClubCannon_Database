@@ -40,21 +40,30 @@ from ui.components import (
 )
 
 
+# --------------------------------------------------
+# FUNCTIONS AND VARIABLES FOR REAL TIME CALCULATIONS
+# --------------------------------------------------
+
 def beginning_of_year(dt: datetime) -> datetime:
     return datetime(dt.year, 1, 1)
 
-# MAKE VARIABLES FOR REAL TIME DATA CALCULATIONS
 today = datetime.now()
 one_year_ago = today - timedelta(days=365)
 two_years_ago = today - timedelta(days=730)
 three_years_ago = today - timedelta(days=1095)
 four_years_ago = today - timedelta(days=1460)
 
-### CREATE DATE LISTS ###
+# -----------------
+# CREATE DATE LISTS
+# -----------------
 
 months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 months_x = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 years = ['2022', '2023', '2024', '2025', '2026']
+
+# ---------------------
+# BOM COST DICTIONARIES
+# ---------------------
 
 bom_cost_jet = {'Pro Jet': 290.86, 'Quad Jet': 641.43, 'Micro Jet': 243.57, 'Cryo Clamp': 166.05}
 bom_cost_control = {'The Button': 141.07, 'Shostarter': 339.42, 'Shomaster': 667.12}
@@ -69,8 +78,10 @@ bom_cost_mfx = {'MagicFX Commander': 355.73, 'Magic FX Smoke Bubble Blaster': 33
 
 
 
+# --------------------
+# MAKE DATA ACCESSIBLE
+# --------------------
 
-# MAKE DATA AVAILABLE
 df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist, unique_customer_list, master_customer_list, wholesale_list = load_all_data()
 
 rev_by_year = to_date_revenue(df)
@@ -87,7 +98,6 @@ td_24_tot = td_24[0] + td_24[1]
 td_23_tot = td_23[0] + td_23[1]
 td_22_tot = td_22[0] + td_22[1]
 
-
 sales_dict_23 = get_monthly_sales_v2(df, 2023)
 total_23, web_23, ful_23, avg_23, magic23 = calc_monthly_totals_v2(sales_dict_23)
 
@@ -101,6 +111,13 @@ total_25, web_25, ful_25, avg_25, magic25 = calc_monthly_totals_v2(sales_dict_25
 #total_26, web_26, ful_26, avg_26, magic26 = calc_monthly_totals_v2(sales_dict_26)
 
 
+# ----------------------------------------
+# EXTRA PRODUCT SALES DATA FROM DATAFRAMES
+# ----------------------------------------
+
+# ---------
+# HANDHELDS
+# ---------
 
 @st.cache_data
 def extract_handheld_data(df):
@@ -216,7 +233,11 @@ def extract_handheld_data(df):
         idx += 1
     
     return dict_23, dict_24, dict_25, dict_26, hose_count_23, hose_count_24, hose_count_25, hose_count_26
+    
 
+# -----
+# HOSES
+# -----
 
 @st.cache_data
 def extract_hose_data(df):
@@ -302,6 +323,10 @@ def extract_hose_data(df):
 
     return result.get(2023), result.get(2024), result.get(2025), result.get(2026)
 
+
+# -----------
+# ACCESSORIES
+# -----------
 
 @st.cache_data
 def extract_acc_data(df):
@@ -413,6 +438,10 @@ def extract_acc_data(df):
     return results[2023], results[2024], results[2025], results[2026]
 
 
+# -----------
+# CONTROLLERS
+# -----------
+
 @st.cache_data
 def extract_control_data(df):
 
@@ -473,6 +502,9 @@ def extract_control_data(df):
     return result.get(2023), result.get(2024), result.get(2025), result.get(2026)
 
 
+# ---------------
+# STATIONARY JETS
+# ---------------
 
 @st.cache_data
 def extract_jet_data(df):
@@ -535,6 +567,11 @@ def extract_jet_data(df):
     
     # Return dictionaries for the target years.
     return result.get(2023), result.get(2024), result.get(2025), result.get(2026)
+    
+
+# ----------------------------------------------------------------------------
+# COLLECT AND ORGANIZE PRODUCT SALES DATA - ACCOUNT FOR HOSES IN HANDHELD KITS
+# ----------------------------------------------------------------------------
 
 @st.cache_data
 def collect_product_data(df, prod='All', years=[2023, 2024, 2025, 2026]):
@@ -686,6 +723,12 @@ def magic_sales(year):
     
     return total_spend, magic_products
 
+
+# -----------------------------------
+# PROCESS AND ORGANIZE EXTRACTED DATA
+# -----------------------------------
+
+
 def product_annual_totals(prod_dict_list):
     """
     prod_dict_list: list of dicts for the SAME year.
@@ -769,7 +812,10 @@ def product_annual_totals(prod_dict_list):
     return year_totals
 
 
-# MAKE TO-DATE REV GLOBAL FOR USE WITH PRODUCTS
+# ------------------------
+# PREP DATA FOR PROCESSING
+# ------------------------
+
 jet23, jet24, jet25, jet26, control23, control24, control25, control26, handheld23, handheld24, handheld25, handheld26, hose23, hose24, hose25, hose26, acc23, acc24, acc25, acc26 = collect_product_data(df)
 
 hose_detail26 = organize_hose_data(hose26)
@@ -789,90 +835,91 @@ def annual_product_totals():
     return prodTot23, prodTot24, prodTot25, prodTot26
 
 
-    
-
 prodTot23, prodTot24, prodTot25, prodTot26 = annual_product_totals()
 
 
-### USE METRIC CARDS TO DISPLAY MONTHLY SALES METRICS ###
+# ------------------------------------------
+# DISPLAY FUNTION FOR PRODUCT SALES BY MONTH
+# ------------------------------------------
 
-def display_month_data_prod(product, sales_dict1, sales_dict2=None, type='Unit'):
+def display_month_data_prod(
+    product,
+    sales_dict1,
+    sales_dict2=None,
+    value_type: str = "Unit",
+    months=None,
+):
+    """
+    Display monthly product data as metric cards in a 3-column grid.
 
-    dBoard1 = st.columns(3)
-    dBoard2 = st.columns(3)
-    dBoard3 = st.columns(3)
-    dBoard4 = st.columns(3)
-    idx = 0
-    idx1 = 0
-    idx2 = 0
-    idx3 = 0
+    Parameters
+    ----------
+    product : str
+        Product key to look up in the sales dictionaries.
+    sales_dict1 : dict
+        Current period sales dict: {month: {product: [value, ...]}, ...}
+    sales_dict2 : dict or None
+        Prior period sales dict with the same structure (optional).
+        If provided, diff vs prior is shown in the description.
+    value_type : str
+        Either "Unit" or "Currency" (case-insensitive).
+    months : list[str] or None
+        List of month labels to display. If None, uses global months_x.
+    """
 
-    for x in months_x:
+    if months is None:
+        months = months_x
 
-        if type == 'Currency':
+    # Normalize type
+    value_type = value_type.lower()  # "unit" or "currency"
 
-            var = ''
-            if sales_dict2 == None:
-                description = ''
-                diff = 0
+    # Create enough rows of 3 columns each for all months
+    num_rows = (len(months) + 2) // 3  # ceiling division
+    rows = [st.columns(3) for _ in range(num_rows)]
+
+    for idx, month in enumerate(months):
+        row_idx, col_idx = divmod(idx, 3)
+        col = rows[row_idx][col_idx]
+
+        # Safely get the current value
+        current_val = (
+            sales_dict1.get(month, {})
+                       .get(product, [0])[0]
+        )
+
+        # Compute diff vs prior year if provided
+        desc = ""
+        if sales_dict2 is not None:
+            prior_val = (
+                sales_dict2.get(month, {})
+                           .get(product, [0])[0]
+            )
+            diff = current_val - prior_val
+            sign = "+" if diff > 0 else "-" if diff < 0 else ""
+            diff_abs = abs(int(diff))
+
+            if value_type == "currency":
+                desc = f"{sign} ${diff_abs:,} vs. prior year"
             else:
-                diff = (sales_dict1[x][product][0]) - (sales_dict2[x][product][0])
-            if diff > 0:
-                var = '+'
-            elif diff < 0:
-                var = '-'
-                
-            if idx < 3:
-                with dBoard1[idx]:
-                    ui.metric_card(title=x, content='${:,}'.format(int(sales_dict1[x][product][0])), description='{} ${:,} vs. prior year]'.format(var, abs(int(diff))))
-            elif idx >=3 and idx < 6:
-                with dBoard2[idx1]:
-                    ui.metric_card(title=x, content='${:,}'.format(int(sales_dict1[x][product][0])), description='{} ${:,} vs. prior year'.format(var, abs(int(diff))))
-                    idx1 += 1
-            elif idx >= 6 and idx < 9:
-                with dBoard3[idx2]:
-                    ui.metric_card(title=x, content='${:,}'.format(int(sales_dict1[x][product][0])), description='{} ${:,} vs. prior year'.format(var, abs(int(diff))))
-                    idx2 += 1
-            else:
-                with dBoard4[idx3]:
-                    ui.metric_card(title=x, content='${:,}'.format(int(sales_dict1[x][product][0])), description='{} ${:,} vs. prior year'.format(var, abs(int(diff))))
-                    idx3 += 1
+                desc = f"{sign} {diff_abs:,} vs. prior year"
 
-        elif type == 'Unit':
+        # Format main content based on type
+        if value_type == "currency":
+            content = f"${int(current_val):,}"
+        else:
+            content = f"{int(current_val):,}"
 
-            var = ''
-            if sales_dict2 == None:
-                description = ''
-                diff = 0
-            else:   
-                diff = (sales_dict1[x][product][0]) - (sales_dict2[x][product][0])
-            if diff > 0:
-                var = '+'
-            elif diff < 0:
-                var = '-'
-                
-            if idx < 3:
-                with dBoard1[idx]:
-                    ui.metric_card(title=x, content='{:,}'.format(int(sales_dict1[x][product][0])), description='{} {} vs. prior year'.format(var, abs(int(diff))))
-            elif idx >=3 and idx < 6:
-                with dBoard2[idx1]:
-                    ui.metric_card(title=x, content='{:,}'.format(int(sales_dict1[x][product][0])), description='{} {} vs. prior year'.format(var, abs(int(diff))))
-                    idx1 += 1
-            elif idx >= 6 and idx < 9:
-                with dBoard3[idx2]:
-                    ui.metric_card(title=x, content='{:,}'.format(int(sales_dict1[x][product][0])), description='{} {} vs. prior year'.format(var, abs(int(diff))))
-                    idx2 += 1
-            else:
-                with dBoard4[idx3]:
-                    ui.metric_card(title=x, content='{:,}'.format(int(sales_dict1[x][product][0])), description='{} {} vs. prior year'.format(var, abs(int(diff))))
-                    idx3 += 1
-
-        idx += 1
-            
-
-    return None
+        with col:
+            ui.metric_card(
+                title=month,
+                content=content,
+                description=desc,
+            )
 
 
+# ------------------------------------------
+# PRODUCT METRICS - PROFIT AND AVERAGE PRICE
+# ------------------------------------------
 
 def calc_prod_metrics(prod_dict, product, bom_dict, prod_dict_prior=None):
 
@@ -915,139 +962,155 @@ def calc_prod_metrics(prod_dict, product, bom_dict, prod_dict_prior=None):
     else:
         return prod_profit, profit_per_unit, prod_profit_last, avg_price, avg_price_last
 
-        
+
+# ------------------------------------------------
+# DISPLAY FUNCTIONS FOR HOSES - REVENUE AND PROFIT
+# ------------------------------------------------
 
 def display_hose_data(hose_details1, hose_details2, hose_details3):
+    """
+    Display hose data for three years (currently 2025, 2024, 2023).
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.subheader('2025')
-        idx = 0
-        for group in hose_details1[:7]:
-            group_units = 0
-            group_rev = 0
-            with st.container(border=True):
-                for hose, vals in group.items():
-                    group_units += vals[0]
-                    group_rev += vals[1]
-                    ui.metric_card(title=hose, content='{} units'.format(int(vals[0])), description='${:,.2f} in rev'.format(vals[1]))
-                if idx == 0:
-                    st.markdown('**Totals: {} - (${:,})**'.format(int(group_units), int(group_rev)))
-                else:
-                    st.markdown('**Totals: {} - (${:,})**'.format(int(group_units), int(group_rev)))
-                            
-            idx += 1
-        ui.metric_card(title='100FT STD', content='{} units'.format(int(hose_details1[7][0])), description='${:,.2f} in rev'.format(hose_details1[7][1]), key='2025')
-        
-    with col2:
-        st.subheader('2024')
-        idx2 = 0
-        for group2 in hose_details2[:7]:
-            group2_units = 0
-            group2_rev = 0
-            with st.container(border=True):
-                for hose2, vals2 in group2.items():
-                    group2_units += vals2[0]
-                    group2_rev += vals2[1]
-                    ui.metric_card(title=hose2, content='{} units'.format(int(vals2[0])), description='${:,.2f} in rev'.format(vals2[1]))
-                if idx2 == 0:
-                    st.markdown('**Totals: {} - (${:,})**'.format(int(group2_units), int(group2_rev)))
-                else:
-                    st.markdown('**Totals: {} - (${:,})**'.format(int(group2_units), int(group2_rev)))
-            idx2 += 1
-        ui.metric_card(title='100FT STD', content='{} units'.format(int(hose_details2[7][0])), description='${:,.2f} in rev'.format(hose_details2[7][1]), key='2024')
+    Each `hose_detailsX` is expected to be a list of 8 items:
+      - hose_detailsX[0..6]: dicts like {'5FT STD': [qty, rev], ...}
+      - hose_detailsX[7]: a list/tuple [qty, rev] for '100FT STD'
+    """
+    # Pair year labels with their corresponding data
+    year_data = [
+        ("2025", hose_details1),
+        ("2024", hose_details2),
+        ("2023", hose_details3),
+    ]
 
-        with col3:
-            st.subheader('2023')
-            idx3 = 0
-            for group3 in hose_details3[:7]:
-                group3_units = 0
-                group3_rev = 0
+    cols = st.columns(3)
+
+    for col, (year_label, hose_details) in zip(cols, year_data):
+        with col:
+            st.subheader(year_label)
+
+            # First 7 groups are dicts of hose-type -> [units, revenue]
+            for group_idx, group in enumerate(hose_details[:7]):
+                group_units = 0
+                group_rev = 0
+
                 with st.container(border=True):
-                    for hose3, vals3 in group3.items():
-                        group3_units += vals3[0]
-                        group3_rev += vals3[1]
-                        ui.metric_card(title=hose3, content='{} units'.format(int(vals3[0])), description='${:,.2f} in rev'.format(vals3[1]))
-                    if idx3 == 0:
-                        st.markdown('**Totals: {} - (${:,})**'.format(int(group3_units), int(group3_rev)))
-                    else:
-                        st.markdown('**Totals: {} - (${:,})**'.format(int(group3_units), int(group3_rev)))
-                idx3 += 1
-            ui.metric_card(title='100FT STD', content='{} units'.format(int(hose_details3[7][0])), description='${:,.2f} in rev'.format(hose_details3[7][1]), key='2023')
-        
+                    for hose_name, vals in group.items():
+                        units = vals[0]
+                        rev = vals[1]
+
+                        group_units += units
+                        group_rev += rev
+
+                        ui.metric_card(
+                            title=hose_name,
+                            content=f"{int(units)} units",
+                            description=f"${rev:,.2f} in rev",
+                        )
+
+                    # Group totals
+                    st.markdown(
+                        f"**Totals: {int(group_units)} - (${int(group_rev):,})**"
+                    )
+
+            # The 8th item (index 7) is the 100FT STD summary: [units, rev]
+            hundred_units, hundred_rev = hose_details[7]
+            ui.metric_card(
+                title="100FT STD",
+                content=f"{int(hundred_units)} units",
+                description=f"${hundred_rev:,.2f} in rev",
+                key=f"{year_label}-100FT",
+            )
+
     return None
 
 
 def display_hose_data_profit(hose_details1, hose_details2, hose_details3):
+    """
+    Display hose profit data for 2025, 2024, 2023.
 
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.subheader('2025')
-        idx = 0
-        for group in hose_details1[:7]:
-            group_profit = 0
+    Each hose_detailsX is expected to be a list of 8 items:
+      - hose_detailsX[0..6]: dicts like {'5FT STD': [qty, rev], ...}
+      - hose_detailsX[7]: [qty, rev] for '100FT STD' (we ignore qty/rev here
+        and compute profit based on prodTot* and bom_cost_hose).
+    Relies on globals: prodTot25, prodTot24, prodTot23, bom_cost_hose, calc_prod_metrics.
+    """
 
-            with st.container(border=True):
-                for hose, vals in group.items():
-                    prod_profit, profit_per_unit, prod_profit_last, avg_price, avg_price_last = calc_prod_metrics(prodTot25['hose'], hose, bom_cost_hose, prodTot24['hose'])
-                    group_profit += prod_profit
+    # Pair each year with: (hose_details, current_prod_tot, prior_prod_tot or None)
+    year_data = [
+        ("2025", hose_details1, prodTot25["hose"], prodTot24["hose"]),
+        ("2024", hose_details2, prodTot24["hose"], prodTot23["hose"]),
+        ("2023", hose_details3, prodTot23["hose"], None),  # no prior year passed
+    ]
 
-                    ui.metric_card(title=hose, content='Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit))
-                if idx == 0:
-                    st.markdown('**Group Total: ${:,.2f}**'.format(group_profit))
-                else:
-                    st.markdown('**Group Total: ${:,.2f}**'.format(group_profit))
-                            
-            idx += 1
-        prod_profit100, profit_per_unit100, prod_profit_last100, avg_price100, avg_price_last100 = calc_prod_metrics(prodTot25['hose'], '100FT STD', bom_cost_hose, prodTot24['hose'])
-        ui.metric_card(title='100FT STD', content='Profit: ${:,.2f}'.format(prod_profit100), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit100), key='2025')
-        
-    with col2:
-        st.subheader('2024')
-        idx2 = 0
-        for group2 in hose_details2[:7]:
-            group2_profit = 0
+    cols = st.columns(3)
 
-            with st.container(border=True):
-                for hose2, vals2 in group2.items():
-                    prod_profit, profit_per_unit, prod_profit_last, avg_price, avg_price_last = calc_prod_metrics(prodTot24['hose'], hose2, bom_cost_hose, prodTot23['hose'])
-                    group2_profit += prod_profit
+    for col, (year_label, hose_details, prod_tot_curr, prod_tot_prev) in zip(cols, year_data):
+        with col:
+            st.subheader(year_label)
 
-                    ui.metric_card(title=hose2, content='Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit))
-                if idx2 == 0:
-                    st.markdown('**Group Total: ${:,.2f}**'.format(group2_profit))
-                else:
-                    st.markdown('**Group Total: ${:,.2f}**'.format(group2_profit))
-            idx2 += 1
-        prod_profit100, profit_per_unit100, prod_profit_last100, avg_price100, avg_price_last100 = calc_prod_metrics(prodTot24['hose'], '100FT STD', bom_cost_hose, prodTot23['hose'])    
-        ui.metric_card(title='100FT STD', content='Profit: ${:,.2f}'.format(prod_profit100), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit100), key='2024')
-
-        with col3:
-            st.subheader('2023')
-            idx3 = 0
-            for group3 in hose_details3[:7]:
-                group3_profit = 0
+            # First 7 groups: dicts of hose_name -> [units, revenue]
+            for group in hose_details[:7]:
+                group_profit = 0.0
 
                 with st.container(border=True):
-                    for hose3, vals3 in group3.items():
-                        prod_profit, profit_per_unit, avg_price = calc_prod_metrics(prodTot23['hose'], hose3, bom_cost_hose)
-                        group3_profit += prod_profit
+                    for hose_name, vals in group.items():
+                        # Call calc_prod_metrics with or without prior-year totals
+                        if prod_tot_prev is not None:
+                            prod_profit, profit_per_unit, *rest = calc_prod_metrics(
+                                prod_tot_curr,
+                                hose_name,
+                                bom_cost_hose,
+                                prod_tot_prev,
+                            )
+                        else:
+                            prod_profit, profit_per_unit, *rest = calc_prod_metrics(
+                                prod_tot_curr,
+                                hose_name,
+                                bom_cost_hose,
+                            )
 
-                        ui.metric_card(title=hose3, content='Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit))
-                    if idx3 == 0:
-                        st.markdown('**Group Total: ${:,.2f}**'.format(group3_profit))
-                    else:
-                        st.markdown('**Group Total: ${:,.2f}**'.format(group3_profit))
-                idx3 += 1
-            prod_profit100, profit_per_unit100, avg_price100  = calc_prod_metrics(prodTot23['hose'], '100FT STD', bom_cost_hose)
-            ui.metric_card(title='100FT STD', content='Profit: ${:,.2f}'.format(prod_profit100), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit100), key='2023')
-        
+                        group_profit += prod_profit
+
+                        ui.metric_card(
+                            title=hose_name,
+                            content=f"Profit: ${prod_profit:,.2f}",
+                            description=f"Profit per Unit: ${profit_per_unit:,.2f}",
+                        )
+
+                    st.markdown(f"**Group Total: ${group_profit:,.2f}**")
+
+            # 100FT STD – compute profit via calc_prod_metrics as well
+            if prod_tot_prev is not None:
+                prod_profit100, profit_per_unit100, *rest = calc_prod_metrics(
+                    prod_tot_curr,
+                    "100FT STD",
+                    bom_cost_hose,
+                    prod_tot_prev,
+                )
+            else:
+                prod_profit100, profit_per_unit100, *rest = calc_prod_metrics(
+                    prod_tot_curr,
+                    "100FT STD",
+                    bom_cost_hose,
+                )
+
+            ui.metric_card(
+                title="100FT STD",
+                content=f"Profit: ${prod_profit100:,.2f}",
+                description=f"Profit per Unit: ${profit_per_unit100:,.2f}",
+                key=f"{year_label}-100FT-profit",
+            )
+
     return None
 
 
+# -----------------------------------------------------
+# DISPLAY FUNCTION FOR ACCESSORIES - REVENUE AND PROFIT
+# -----------------------------------------------------
 
 def display_acc_data():
+
+    cola, colb, colc, cold, cole, colf, colg = st.columns([.1,.1,.2,.2,.2,.1,.1])
     
     with colc:
         for item, value in prodTot25['acc'].items():
@@ -1075,10 +1138,45 @@ def display_acc_data():
                 ui.metric_card(title='{}'.format(item_last2), content='{}'.format(value_last2[0]), description='${:,.2f} in Revenue'.format(value_last2[1]), key=key2)
             key2 += 'niane7'
 
-            
-    return None
 
+def display_acc_data_profit():
 
+    cola, colb, colc, cold, cole, colf, colg = st.columns([.1,.1,.2,.2,.2,.1,.1])
+
+    with colc:
+        for item, value in prodTot25['acc'].items():
+            prod_profit, profit_per_unit, prod_profit_last, avg_price, avg_price_last = calc_prod_metrics(prodTot25['acc'], item, bom_cost_acc, prodTot24['acc']) 
+            if item == 'CC-RC-2430':
+                ui.metric_card(title='{}'.format(item), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit))
+            else:
+                value[0] = int(value[0])
+                ui.metric_card(title='{}'.format(item), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit)) 
+    with cold:
+        key = '9jasdig'
+        for item_last, value_last in prodTot24['acc'].items():
+            prod_profit, profit_per_unit, prod_profit_last, avg_price, avg_price_last = calc_prod_metrics(prodTot24['acc'], item_last, bom_cost_acc, prodTot23['acc'])
+            if item_last == 'CC-RC-2430':
+                ui.metric_card(title='{}'.format(item_last), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit))
+            else:
+                value_last[0] = int(value_last[0])
+                ui.metric_card(title='{}'.format(item_last), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit), key=key)
+            key += 'adsg2f'
+    with cole:
+        key2 = 'a'
+        for item_last2, value_last2 in prodTot23['acc'].items():
+            prod_profit, profit_per_unit, avg_price = calc_prod_metrics(prodTot23['acc'], item_last2, bom_cost_acc)
+            if item_last2 == 'CC-RC-2430':
+                ui.metric_card(title='{}'.format(item_last2), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit), key=key2)
+            else:
+                value_last2[0] = int(value_last2[0])
+                ui.metric_card(title='{}'.format(item_last2), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit), key=key2)
+            key2 += 'ba'
+        
+
+# ----------------------------------------------
+# GENEREATE REALTIME ANNUAL COMPARISON FUNCTIONS
+# ----------------------------------------------
+    
 def to_date_product(sku_string):
     # Filter rows where the line_item starts with sku_string.
     mask_sku = df["item_sku"].str.startswith(sku_string)
@@ -1143,6 +1241,10 @@ def to_date_product_rev(sku_string):
 
     return prod_rev23, prod_rev24
 
+
+# ---------------------------------
+# CALCULATE PRODUCT PROFIT FUNCTION
+# ---------------------------------
 
 @st.cache_data
 def profit_by_type(year_list, product_type_list):
@@ -1256,6 +1358,9 @@ profit_24 = profit_by_type(['2024'], ['Jet', 'Control', 'Handheld', 'Hose', 'Acc
 profit_23 = profit_by_type(['2023'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
 
 
+# -------------------------------------------
+# REALTIME ANNUAL PRODUCT COMPARISON - PROFIT
+# -------------------------------------------
 
 def to_date_product_profit(to_date_total, to_date_rev, product_bom_cost):
 
@@ -1321,6 +1426,9 @@ def convert_prod_select_profit(prod_select):
         return var_map[prod_select]
 
 
+# -----------------------------------
+# HISTORICAL PRODUCT DATA / 2013-2022
+# -----------------------------------
 
 @st.cache_data
 def hist_product_data(product_tag):
@@ -1413,6 +1521,9 @@ pwr_cntl_cust, pwr_cntl_annual = hist_product_data(df_hist.power_controller)
 blwr_cust, blwr_annual = hist_product_data(df_hist.confetti_blower)
 
 
+# -----------------------------------
+# RENDER FUNCTION FOR DISPLAY IN MAIN
+# -----------------------------------
 
 def render_products():
     
@@ -2486,61 +2597,12 @@ def render_products():
 
         if acc_scope == 'Overview':
 
-                with colc:
-                    for item, value in prodTot25['acc'].items():
-                        if item == 'CC-RC-2430':
-                            ui.metric_card(title='{}'.format(item), content='{} (PJ: {}, LA: {}, QJ: {})'.format(int(value[0]), int(value[2]), int(value[3]), int(value[4])), description='${:,.2f} in Revenue'.format(value[1]))
-                        else:
-                            value[0] = int(value[0])
-                            ui.metric_card(title='{}'.format(item), content='{}'.format(value[0]), description='${:,.2f} in Revenue'.format(value[1])) 
-                with cold:
-                    key = 'anvienial23'
-                    for item_last, value_last in prodTot24['acc'].items():
-                        if item_last == 'CC-RC-2430':
-                            ui.metric_card(title='{}'.format(item_last), content='{} (PJ: {}, LA: {}, QJ: {})'.format(int(value_last[0]), int(value_last[2]), int(value_last[3]), int(value_last[4])), description='${:,.2f} in Revenue'.format(value_last[1]), key=key)
-                        else:
-                            value_last[0] = int(value_last[0])
-                            ui.metric_card(title='{}'.format(item_last), content='{}'.format(value_last[0]), description='${:,.2f} in Revenue'.format(value_last[1]), key=key)
-                        key += '64sdg5as'
-                with cole:
-                    key2 = 'a'
-                    for item_last2, value_last2 in prodTot23['acc'].items():
-                        if item_last2 == 'CC-RC-2430':
-                            ui.metric_card(title='{}'.format(item_last2), content='{} (PJ: {}, LA: {})'.format(int(value_last2[0]), int(value_last2[2]), int(value_last2[3])), description='${:,.2f} in Revenue'.format(value_last2[1]), key=key2)
-                        else:
-                            value_last2[0] = int(value_last2[0])
-                            ui.metric_card(title='{}'.format(item_last2), content='{}'.format(value_last2[0]), description='${:,.2f} in Revenue'.format(value_last2[1]), key=key2)
-                        key2 += 'niane7'
+            display_acc_data()
 
         if acc_scope == 'Profit':
-            with colc:
-                for item, value in prodTot25['acc'].items():
-                    prod_profit, profit_per_unit, prod_profit_last, avg_price, avg_price_last = calc_prod_metrics(prodTot25['acc'], item, bom_cost_acc, prodTot24['acc']) 
-                    if item == 'CC-RC-2430':
-                        ui.metric_card(title='{}'.format(item), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit))
-                    else:
-                        value[0] = int(value[0])
-                        ui.metric_card(title='{}'.format(item), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit)) 
-            with cold:
-                key = '9jasdig'
-                for item_last, value_last in prodTot24['acc'].items():
-                    prod_profit, profit_per_unit, prod_profit_last, avg_price, avg_price_last = calc_prod_metrics(prodTot24['acc'], item_last, bom_cost_acc, prodTot23['acc'])
-                    if item_last == 'CC-RC-2430':
-                        ui.metric_card(title='{}'.format(item_last), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit))
-                    else:
-                        value_last[0] = int(value_last[0])
-                        ui.metric_card(title='{}'.format(item_last), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit), key=key)
-                    key += 'adsg2f'
-            with cole:
-                key2 = 'a'
-                for item_last2, value_last2 in prodTot23['acc'].items():
-                    prod_profit, profit_per_unit, avg_price = calc_prod_metrics(prodTot23['acc'], item_last2, bom_cost_acc)
-                    if item_last2 == 'CC-RC-2430':
-                        ui.metric_card(title='{}'.format(item_last2), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit), key=key2)
-                    else:
-                        value_last2[0] = int(value_last2[0])
-                        ui.metric_card(title='{}'.format(item_last2), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit), key=key2)
-                    key2 += 'ba'
+
+            display_acc_data_profit()
+
 
     elif prod_cat == 'MagicFX':
         

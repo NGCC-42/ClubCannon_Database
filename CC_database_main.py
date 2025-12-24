@@ -109,8 +109,10 @@ from ui.components import (
 def main():
 
 
+    # ----------------
+    # SET HEADER IMAGE
+    # ----------------
     
-    ### SET HEADER IMAGE
     image = Image.open('data/Images/club-cannon-logo-bbb.png')
     col1, col2, col3 = st.columns(3)
     col2.image(image, 
@@ -119,24 +121,32 @@ def main():
     st.header('')
 
     
-    ### CREATE DATE LISTS ###
+    # -----------------
+    # CREATE DATE LISTS
+    # -----------------
     
     months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     months_x = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     years = ['2022', '2023', '2024', '2025', '2026']
 
-    
+
+    # ----------------------------------
     # LOAD IN ALL DATA FROM data.load.py
+    # ----------------------------------
     
     df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist, unique_customer_list, master_customer_list, wholesale_list = load_all_data()
 
     
-    ### MAKE LIST OF PRODUCT TYPES ###
+    # --------------------------
+    # MAKE LIST OF PRODUCT TYPES
+    # --------------------------
     
     product_types = ['Jets', 'Controllers', 'Hoses', 'Accessories', 'Handhelds']
     
-    
-    ### GENERATE SIDEBAR MENU ###
+
+    # ---------------------
+    # GENERATE SIDEBAR MENU 
+    # ---------------------
     
     task_select = ''
     #task_choice = ''
@@ -161,9 +171,10 @@ def main():
                 }
             )
     
-    
-    
+
+    # ---------------------
     # BOM COST DICTIONARIES
+    # ---------------------
         
     bom_cost_jet = {'Pro Jet': 290.86, 'Quad Jet': 641.43, 'Micro Jet': 243.57, 'Cryo Clamp': 166.05}
     bom_cost_control = {'The Button': 141.07, 'Shostarter': 339.42, 'Shomaster': 667.12}
@@ -176,8 +187,10 @@ def main():
                     'MagicFX Swirl Fan II': 1406.63, 'MagicFX Switchpack II': 448.73, 'MFX-AC-SBRV': 328.68, 'MFX-E2J-230': 3282.40, 'MFX-E2J-2LFA': 97, 'MFX-E2J-5LFCB': 128, 'MFX-E2J-F-ID': 30.45, 'MFX-E2J-F-OD': 37.92, 'MFX-E2J-FC': 673.48, 'MFX-E2J-FEH-1M': 46, 'MFX-E2J-FEH-2M': 69, 
                     'MFX-E2J-OB': 46, 'MFX-ECO2JET-BKT': 193, 'MFX-SS3-RB': 136.13}
 
-    
+    # ----------------------------------------------
     # MAKE VARIABLES FOR REAL TIME DATA CALCULATIONS
+    # ----------------------------------------------
+    
     def beginning_of_year(dt: datetime) -> datetime:
         return datetime(dt.year, 1, 1)
     
@@ -187,14 +200,24 @@ def main():
     three_years_ago = today - timedelta(days=1095)
     four_years_ago = today - timedelta(days=1460)
     
-    
+
+    # -----------------------------
     # CALCULATE MAGIC FX SALES DATA
+    # -----------------------------
+    
     mfx_rev, mfx_costs, mfx_profit = magic_sales_data()
     
 
+    # ---------------------
     # HISTORICAL SALES DATA
+    # ---------------------
+    
     sales13, sales14, sales15, sales16, sales17, sales18, sales19, sales20, sales21, sales22 = hist_annual_sales()  
 
+
+    # ----------------------------------
+    # REAL-TIME TO-DATE DATA CALCULATION
+    # ----------------------------------
     
     rev_by_year = to_date_revenue(df)
     
@@ -209,7 +232,11 @@ def main():
     td_24_tot = td_24[0] + td_24[1]
     td_23_tot = td_23[0] + td_23[1]
     td_22_tot = td_22[0] + td_22[1]
-    
+
+
+    # ---------------------------
+    # CALCULATE ANNUAL SALES DATA
+    # ---------------------------
     
     sales_dict_23 = get_monthly_sales_v2(df, 2023)
     total_23, web_23, ful_23, avg_23, magic23 = calc_monthly_totals_v2(sales_dict_23)
@@ -227,10 +254,12 @@ def main():
     if task_choice == 'Dashboard':
     
     
-        td_sales25, td_sales24, td_sales23 = get_monthly_sales_ytd()
-    
+        # ------------------------------
+        # COMPILE DATA FOR SALES REPORTS 
+        # ------------------------------
         
-        ### COMPILE DATA FOR SALES REPORTS ###
+        td_sales25, td_sales24, td_sales23 = get_monthly_sales_ytd()
+        
         total_22 = 1483458.64
         avg_22 = 147581.12
         trans_22 = 1266
@@ -250,31 +279,33 @@ def main():
 
 
     
-    
-        ### RENDER DASHBOARD PAGE ###
+        # ---------------------
+        # RENDER DASHBOARD PAGE 
+        # ---------------------
         render_dashboard(td_25, td_24, td_23, td_22, sales_dict_25, sales_dict_24, sales_dict_23, td_sales25, td_sales24, td_sales23)
 
     
-    
     if task_choice == 'Product Reports':
-    
-        ### RENDER PRODUCT REPORTS ###
+
+        # ----------------------
+        # RENDER PRODUCT REPORTS 
+        # ----------------------
         render_products()
             
     
-    
-    
     if task_choice == 'Customer Details':
 
-        ### RENDER CUSTOMER DETAILS ###
+        # -----------------------
+        # RENDER CUSTOMER DETAILS 
+        # -----------------------
         render_customer(df, df_qb, master_customer_list)
         
-
-    
     
     if task_choice == 'Leaderboards':
 
-        ### RENDER LEADERBOARDS ###
+        # -------------------
+        # RENDER LEADERBOARDS 
+        # -------------------
         render_leaderboards()
     
 

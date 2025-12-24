@@ -64,16 +64,26 @@ from logic.products import (
 )
 
 
+# -----------------
+# CREATE DATE LISTS
+# -----------------
+
 months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 months_x = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 years = ['2022', '2023', '2024', '2025', '2026']
 
 
+# --------------------
+# MAKE DATA ACCESSIBLE
+# --------------------
+
 df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist, unique_customer_list, master_customer_list, wholesale_list = load_all_data()
 
 
+# --------------------------------------------------
+# FUNCTIONS AND VARIABLES FOR REAL TIME CALCULATIONS
+# --------------------------------------------------
 
-# MAKE VARIABLES FOR REAL TIME DATA CALCULATION
 
 today = datetime.now()
 one_year_ago = today - timedelta(days=365)
@@ -82,8 +92,10 @@ three_years_ago = today - timedelta(days=1095)
 four_years_ago = today - timedelta(days=1460)
 
 
-
+# -------------------------------------------------
 # HISTORICAL TO-DATE REVENUE -- NEEDS ANNUAL UPDATE
+# -------------------------------------------------
+
 @st.cache_data
 def hist_td_rev(year: int) -> float:
     # Make a copy so we don't mutate the original
@@ -143,9 +155,10 @@ def hist_td_rev(year: int) -> float:
     return float(td_sales)
 
 
+# ----------------------------------------------
+# USE METRIC CARDS TO DISPLAY MONTHLY SALES DATA
+# ----------------------------------------------
 
-
-### USE METRIC CARDS TO DISPLAY MONTHLY SALES DATA ###
 def display_month_data_x(sales_dict1, sales_dict2=None, note=None):
 
     dBoard1 = st.columns(3)
@@ -208,6 +221,10 @@ def display_month_data_x(sales_dict1, sales_dict2=None, note=None):
                 
     return None
 
+
+# -------------------------------------------------------------------------------------
+# DISPLAY SALES METRICS - FORMATS METRIC CARD DISPLAY - SHOULD BE UPDATED OR REFACTORED
+# -------------------------------------------------------------------------------------
 
 def display_metrics(sales_dict1, sales_dict2=None, month='All', wvr1=None, wvr2=None, note=None):
 
@@ -440,6 +457,11 @@ def display_metrics(sales_dict1, sales_dict2=None, month='All', wvr1=None, wvr2=
     
     return None
 
+
+# ----------------------------------------------
+# FUNCTION TO CALCULATE HISTORICAL QUARTLY SALES 
+# ----------------------------------------------
+
 @st.cache_data
 def hist_quarterly_sales():
     # Define the quarters as lists of month names
@@ -475,15 +497,23 @@ def hist_quarterly_sales():
     
     return qs13, qs14, qs15, qs16, qs17, qs18, qs19, qs20, qs21, qs22
 
-  
 
-# CALCULATE SALES DATA FOR DISPLAY
-
+# -----------------------------
 # CALCULATE MAGIC FX SALES DATA
+# -----------------------------
+
 mfx_rev, mfx_costs, mfx_profit = magic_sales_data()
 
+# ---------------------
 # HISTORICAL SALES DATA
+# ---------------------
+
 sales13, sales14, sales15, sales16, sales17, sales18, sales19, sales20, sales21, sales22 = hist_annual_sales()  
+
+
+# -------------------------------
+# WHOLESALE VS. RETAIL SALES DATA
+# -------------------------------
 
 wvr_23_months = get_monthly_sales_wvr(df, 2023)
 wvr_24_months = get_monthly_sales_wvr(df, 2024)
@@ -497,13 +527,18 @@ wvr_23_totals_ytd = wholesale_retail_totals(wvr_24_ytd)
 wvr_24_totals = wholesale_retail_totals(wvr_24_months)
 wvr_25_totals_ytd = wholesale_retail_totals(wvr_25_ytd)
 
+# ----------------------------
+# QUARTERLY SALES CALCULATIONS
+# ----------------------------
+
 q1_25, q2_25, q3_25, q4_25 = quarterly_sales(2025)
 q1_24, q2_24, q3_24, q4_24 = quarterly_sales(2024)
 q1_23, q2_23, q3_23, q4_23 = quarterly_sales(2023)
 qs13, qs14, qs15, qs16, qs17, qs18, qs19, qs20, qs21, qs22 = hist_quarterly_sales()
 
-
+# -------------------------------------------
 # FACTOR DATA FOR LINE GRAPH COMPARISON CHART
+# -------------------------------------------
 
 sales_dict_23 = get_monthly_sales_v2(df, 2023)
 total_23, web_23, ful_23, avg_23, magic23 = calc_monthly_totals_v2(sales_dict_23)
@@ -517,16 +552,25 @@ total_25, web_25, ful_25, avg_25, magic25 = calc_monthly_totals_v2(sales_dict_25
 #sales_dict_26 = get_monthly_sales_v2(df, 2026)
 #total_26, web_26, ful_26, avg_26, magic26 = calc_monthly_totals_v2(sales_dict_26)
 
+# ---------------------------------------------------
+# REALTIME TO-DATE SALES CALCULATIONS FOR COMPARISON
+# ---------------------------------------------------
 
 td_sales25, td_sales24, td_sales23 = get_monthly_sales_ytd()
+
+# -------------------
+# PROFIT CALCULATIONS
+# -------------------
 
 #profit_26 = profit_by_type(['2026'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
 profit_25 = profit_by_type(['2025'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
 profit_24 = profit_by_type(['2024'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory']) + mfx_profit
 profit_23 = profit_by_type(['2023'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
 
+# ------------------------------
+# COMPILE DATA FOR SALES REPORTS
+# ------------------------------
 
-### COMPILE DATA FOR SALES REPORTS ###
 total_22 = 1483458.64
 avg_22 = 147581.12
 trans_22 = 1266
@@ -544,7 +588,10 @@ sales_dict_22 = {'January': [[0, 1], [0, 1], [0]],
                  'November': [[57760.81, 77], [57760.82, 30], [0]], 
                  'December': [[75155.19, 64], [75155.20, 30], [0]]}
 
+# ---------------------------------------------------
 # COMPILE AND FORMAT DATA FOR ANNUAL COMPARISON GRAPH
+# ---------------------------------------------------
+
 x = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
 
 def graph_data():
@@ -595,6 +642,10 @@ def graph_data():
 
 y2013, y2014, y2015, y2016, y2017, y2018, y2019, y2020, y2021, y2022, y2023, y2024, y2025 = graph_data()
 
+
+# ------------------------------------
+# RENDER FUNCTION TO DISPLAY DASHBOARD
+# ------------------------------------
 
 def render_dashboard(td_25, td_24, td_23, td_22, sales_dict_25, sales_dict_24, sales_dict_23, td_sales25, td_sales24, td_sales23):
 

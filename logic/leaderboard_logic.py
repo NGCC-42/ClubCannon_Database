@@ -18,9 +18,16 @@ from streamlit_option_menu import option_menu
 from data.load import load_all_data
 
 
+# ------------
+# LOAD IN DATA
+# ------------
+
 df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist, unique_customer_list, master_customer_list, wholesale_list = load_all_data()
 
 
+# -------------------------------------------
+# HELPER FUNCTION FOR LEADERBOARD MODULE
+# -------------------------------------------
 
 @st.cache_data
 def get_customer_spend_by_year(df: pd.DataFrame) -> dict[int, dict[str, float]]:

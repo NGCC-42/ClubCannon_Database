@@ -17,6 +17,9 @@ from streamlit_option_menu import option_menu
 #import base64
 
 
+# ----------------------------------------------------------
+# HELPER FUNCTION TO CREATE DATAFRAME FROM EXCEL SPREADSHEET
+# ----------------------------------------------------------
 
 @st.cache_data
 def create_dataframe(ss):
@@ -28,10 +31,19 @@ def create_dataframe(ss):
     return df
 
 
+# -------------------------------------
+# FUNCTION TO READ IN PARQUET FILE DATA
+# -------------------------------------
+
 @st.cache_data(ttl=7200)
 def load_parquet_data():
-    url = "https://www.dropbox.com/scl/fi/ivamczv7grtiqkutpbp2m/SOD-11.25.25.parquet?rlkey=stz2pebr0jitwx4xual616o3e&dl=1"
+    url = "https://www.dropbox.com/scl/fi/jmau29b93y6d5xs4ax8wh/SOD-12.23.25.parquet?rlkey=c4vh0k168qctgsldj0ebsvyld&dl=1"
     return pd.read_parquet(url)
+
+
+# ---------------------------------------------------------------------
+# HELPER FUNCTION TO READ IN WHOLESALE CUSTOMERS AND CREATE USABLE LIST
+# ---------------------------------------------------------------------
 
 @st.cache_data
 def gen_ws_list(df_wholesale):
@@ -41,7 +53,9 @@ def gen_ws_list(df_wholesale):
     return wholesale_list
 
 
-### RENAME DF COLUMNS FOR SIMPLICITY ###
+# --------------------------------------------------------------------
+# RENAME DF COLUMNS FOR SIMPLICITY + PREPROCESS TO AVOID COMPLICATIONS
+# --------------------------------------------------------------------
 
 @st.cache_data
 def preprocess_data(df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist):
@@ -152,7 +166,10 @@ def preprocess_data(df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_q
     return df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist
 
 
-### DEFINE A FUNCTION TO CORRECT NAME DISCRPANCIES IN SOD
+# ---------------------------------------------------------------------
+# DEFINE A FUNCTION TO CORRECT NAME DISCRPANCIES IN SOD AND STANDARDIZE
+# ---------------------------------------------------------------------
+
 @st.cache_data
 def fix_names(df):
 
@@ -180,7 +197,8 @@ def fix_names(df):
     df.replace('Andrew Pla / Rock The House', 'Steve Tanruther / Rock The House', inplace=True)
     df.replace('Ryan Konikoff / ROCK THE HOUSE', 'Steve Tanruther / Rock The House', inplace=True)
     df.replace('Cole M. Blessinger', 'Cole Blessinger', inplace=True)
-    df.replace('Parti Line International, LLC', 'Fluttter Feti', inplace=True)
+    df.replace('Parti Line International, LLC', 'Flutter Fetti', inplace=True)
+    df.replace('Flutter Feti', 'Flutter Fetti', inplace=True)
     df.replace('MICHAEL MELICE', 'Michael Melice', inplace=True)
     df.replace('Michael Brammer / Special Event Services', 'Special Event Services (SES)', inplace=True)
     df.replace('Dios Vazquez ', 'Dios Vazquez', inplace=True)
@@ -333,6 +351,10 @@ def fix_names(df):
    
     return df
 
+
+# --------------------------------------------------------------
+# FUNCTION TO LOAD IN ALL DATA FOR PROCESSING IN VARIOUS MODULES
+# --------------------------------------------------------------
 
 @st.cache_data
 def load_all_data():

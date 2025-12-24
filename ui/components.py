@@ -18,7 +18,10 @@ from streamlit_option_menu import option_menu
 
 
 
-
+# -------------------
+# METIC CARD STYLING 
+# -------------------
+ 
 def style_metric_cards(
     background_color: str = "#000000",
     border_size_px: int = 1.5,

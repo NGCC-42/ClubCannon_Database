@@ -23,8 +23,11 @@ from streamlit_option_menu import option_menu
 months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 months_x = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 years = ['2022', '2023', '2024', '2025', '2026']
-#year_select = ['2025']
 
+
+# --------------------------------------------------
+# FORMAT DICTIONARY HANDHELD DATA FOR CHART PLOTTING
+# --------------------------------------------------
 
 def format_for_chart_hh(data_dict):
     temp_dict = {'Years': [], 'Handheld Sales': []}
@@ -38,7 +41,10 @@ def format_for_chart_hh(data_dict):
     
     return df
 
-    
+
+# ---------------------------------------------
+# FUNCTION TO DISPLAY HANDHELD COMPARISON CHART
+# ---------------------------------------------
 
 def plot_bar_chart_hh(df):
     st.write(alt.Chart(df).mark_bar().encode(
@@ -49,8 +55,9 @@ def plot_bar_chart_hh(df):
     ))
 
 
-
-### DEFINE A FUNCTION TO CONVERT - SERIES --> DICT --> DATAFRAME ###
+# ------------------------------------------------------------
+# FUNCTION TO CONVERT - SERIES --> DICT --> DATAFRAME
+# ------------------------------------------------------------
 
 def format_for_chart(series):
     
@@ -66,10 +73,10 @@ def format_for_chart(series):
     
     return df
 
-#st.write(format_for_chart(df_cntl23_unt.iloc[0]))
 
-
-### SCRIPT TO PLOT BAR GRAPH FOR PRODUCT SALES ###
+# --------------------------------------------
+# FUNCTION TO PLOT BAR GRAPH FOR PRODUCT SALES
+# --------------------------------------------
 
 def plot_bar_chart(df):
     st.write(alt.Chart(df).mark_bar().encode(
@@ -79,6 +86,10 @@ def plot_bar_chart(df):
         color='limegreen'
     ))
 
+
+# -----------------------------------------
+# DAILY SALES PLOT GRAPH - CURRENTLY UNUSED
+# -----------------------------------------
 
 def display_daily_plot(month, years=['All']):
     
@@ -167,7 +178,10 @@ def display_daily_plot(month, years=['All']):
     return None
 
 
-### FUNCTIONS FOR PLOTTING CHARTS ###
+# --------------------------------------------------------------------
+# FUNCTION TO FORMAT DATA FOR MONTHLY SALES GRAPH / DICT --> DATAFRAME
+# --------------------------------------------------------------------
+
 def format_for_chart_ms(data_dict, note=None):
     temp_dict = {'Months': months_x, 'Total Sales': []}
     
@@ -181,6 +195,11 @@ def format_for_chart_ms(data_dict, note=None):
     
     return df
 
+
+# -----------------------------------------
+# DISPLAY FUNCTION FOR MONTHLY SALES GRAPH
+# -----------------------------------------
+
 def plot_bar_chart_ms(df):
     st.write(alt.Chart(df).mark_bar().encode(
         x=alt.X('Months', sort=None).title('Month'),
@@ -188,6 +207,11 @@ def plot_bar_chart_ms(df):
     ).properties(height=500, width=700).configure_mark(
         color='limegreen'
     ))
+
+
+# ----------------------------------------------------------------
+# DISPLAY FUNCTION FOR MONTHLY SALES COMPARISON - CURRENTLY UNUSED
+# ----------------------------------------------------------------
 
 def plot_bar_chart_ms_comp(df):
     st.write(alt.Chart(df).mark_bar().encode(
@@ -197,6 +221,10 @@ def plot_bar_chart_ms_comp(df):
         color='limegreen'
     ))
 
+
+# ------------------------------------------------------
+# FORMAT DATA FOR PRODUCT PIE CHART - DICT --> DATAFRAME
+# ------------------------------------------------------
 
 def format_for_pie_chart(dict, key=0):
     
@@ -212,6 +240,11 @@ def format_for_pie_chart(dict, key=0):
 
     return df
 
+
+# ------------------------------------------------------------------
+# FORMAT DATA FOR LINE GRAPH - DICT --> DATAFRAME - CURRENTLY UNUSED
+# ------------------------------------------------------------------
+    
 def format_for_line_graph(dict1, product, dict2=None, key=0):
 
     months = []
@@ -225,6 +258,11 @@ def format_for_line_graph(dict1, product, dict2=None, key=0):
     df = pd.DataFrame(np.column_stack([months, units_sold]), columns=columns)
 
     return df
+
+
+# -------------------------------------------------
+# DISPLAY FUNCTION FOR PRODUCT COMPARISON PIE CHART
+# -------------------------------------------------
         
 def display_pie_chart_comp(df):
     col1, col2 = st.columns(2)
@@ -241,6 +279,11 @@ def display_pie_chart_comp(df):
         st.plotly_chart(revFig, use_container_width=False)        
 
     return None
+
+
+# ------------------------------------------------------
+# DISPLAY ANNUAL SALES COMPARISON LINE GRAPH - DASHBOARD
+# ------------------------------------------------------
 
 def plot_annual_comparison(x, years_to_plot='2025', col1=None, series_by_year=None, line_width=4.5, fig_width=12, fig_height=8):
     # Define year series mapping
@@ -315,6 +358,10 @@ def plot_annual_comparison(x, years_to_plot='2025', col1=None, series_by_year=No
         st.pyplot(fig, use_container_width=True)
 
 
+# ----------------------------------------------------------
+# FORMAT FOR HISTORICAL PRODUCTS FUNCTION - CURRENTLY UNUSED
+# ----------------------------------------------------------
+
 def format_for_chart_product(data_dict, prod_label):
     temp_dict = {'Years': [], prod_label: []}
 
@@ -328,6 +375,9 @@ def format_for_chart_product(data_dict, prod_label):
     return df
 
 
+# -------------------------------------------------------
+# DISPLAY HISTORICAL PRODUCT BAR CHART - CURRENTLY UNUSED
+# -------------------------------------------------------
 
 def plot_bar_chart_product(df, prod_label):
     st.write(alt.Chart(df).mark_bar().encode(
@@ -337,6 +387,10 @@ def plot_bar_chart_product(df, prod_label):
         color='limegreen'
     ))
 
+
+# -------------------------------------------------
+# FORMAT FOR HISTORICAL PRODUCTS FUNCTION - STACKED
+# -------------------------------------------------
 
 def format_for_chart_product_seg(data_dict, prod_label):
     """
@@ -359,6 +413,10 @@ def format_for_chart_product_seg(data_dict, prod_label):
     
     return pd.DataFrame(temp_dict)
 
+
+# ----------------------------------------------
+# DISPLAY HISTORICAL PRODUCTS FUNCTION - STACKED
+# ----------------------------------------------
 
 def plot_bar_chart_product_seg(df, prod_label):
     """

@@ -22,13 +22,15 @@ from logic.analytics import (
 )
 
 from ui.components import style_metric_cards
-
-
 import pandas as pd
 import streamlit as st
+from logic.analytics import percent_of_change 
 
-from logic.analytics import percent_of_change  # wherever it lives
 
+
+# -----------------------------------------------------------
+# HELPER FUNCTION TO PROCESS DATA FOR CUSTOMER DETAILS MODULE
+# -----------------------------------------------------------
 
 @st.cache_data
 def compute_customer_details(df, df_qb, customer_name):
