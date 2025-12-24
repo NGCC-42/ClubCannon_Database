@@ -27,13 +27,13 @@ from logic.analytics import (
     magic_sales_data
 )
 
-from ui.charts import (
-    display_pie_chart_comp, 
-    plot_bar_chart_product_seg, 
-    format_for_chart_hh,
-    plot_bar_chart_hh,
-    format_for_chart_product_seg
-)
+#from ui.charts import (
+#    display_pie_chart_comp, 
+#    plot_bar_chart_product_seg, 
+#    format_for_chart_hh,
+#    plot_bar_chart_hh,
+#    format_for_chart_product_seg
+#)
 
 from ui.components import (
     style_metric_cards
