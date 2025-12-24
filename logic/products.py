@@ -24,7 +24,8 @@ from logic.analytics import (
     percent_of_change,
     get_monthly_sales_v2,
     calc_monthly_totals_v2,
-    magic_sales_data
+    magic_sales_data,
+    df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist, unique_customer_list, master_customer_list, wholesale_list
 )
 
 #from ui.charts import (
@@ -82,7 +83,7 @@ bom_cost_mfx = {'MagicFX Commander': 355.73, 'Magic FX Smoke Bubble Blaster': 33
 # MAKE DATA ACCESSIBLE
 # --------------------
 
-df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist, unique_customer_list, master_customer_list, wholesale_list = load_all_data()
+#df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist, unique_customer_list, master_customer_list, wholesale_list = load_all_data()
 
 rev_by_year = to_date_revenue(df)
 
