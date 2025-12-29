@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import openpyxl
 import streamlit_shadcn_ui as ui
-from streamlit_extras.metric_cards import style_metric_cards
+#from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_option_menu import option_menu
 from data.load import load_all_data
 
@@ -27,6 +27,7 @@ from logic.analytics import (
     magic_sales_data
 )
 
+"""
 from ui.charts import (
     display_pie_chart_comp, 
     plot_bar_chart_product_seg, 
@@ -34,6 +35,7 @@ from ui.charts import (
     plot_bar_chart_hh,
     format_for_chart_product_seg
 )
+"""
 
 from ui.components import (
     style_metric_cards
@@ -47,15 +49,21 @@ from ui.components import (
 def beginning_of_year(dt: datetime) -> datetime:
     return datetime(dt.year, 1, 1)
 
-today = datetime.now()
-one_year_ago = today - timedelta(days=365)
-two_years_ago = today - timedelta(days=730)
-three_years_ago = today - timedelta(days=1095)
-four_years_ago = today - timedelta(days=1460)
+def calc_time_context():
+    
+    today = datetime.now()
+    one_year_ago = today - timedelta(days=365)
+    two_years_ago = today - timedelta(days=730)
+    three_years_ago = today - timedelta(days=1095)
+    four_years_ago = today - timedelta(days=1460)
+
+    return today, one_year_ago, two_years_ago, three_years_ago, four_years_ago
 
 # -----------------
 # CREATE DATE LISTS
 # -----------------
+
+today, one_year_ago, two_years_ago, three_years_ago, four_years_ago = calc_time_context()
 
 months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 months_x = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -838,6 +846,7 @@ def annual_product_totals():
 prodTot23, prodTot24, prodTot25, prodTot26 = annual_product_totals()
 
 
+"""
 # ------------------------------------------
 # DISPLAY FUNTION FOR PRODUCT SALES BY MONTH
 # ------------------------------------------
@@ -849,23 +858,23 @@ def display_month_data_prod(
     value_type: str = "Unit",
     months=None,
 ):
-    """
+
     Display monthly product data as metric cards in a 3-column grid.
 
-    Parameters
-    ----------
-    product : str
-        Product key to look up in the sales dictionaries.
-    sales_dict1 : dict
-        Current period sales dict: {month: {product: [value, ...]}, ...}
-    sales_dict2 : dict or None
-        Prior period sales dict with the same structure (optional).
-        If provided, diff vs prior is shown in the description.
-    value_type : str
-        Either "Unit" or "Currency" (case-insensitive).
-    months : list[str] or None
-        List of month labels to display. If None, uses global months_x.
-    """
+   # Parameters
+   # ----------
+   # product : str
+   #     Product key to look up in the sales dictionaries.
+   # sales_dict1 : dict
+   #     Current period sales dict: {month: {product: [value, ...]}, ...}
+   # sales_dict2 : dict or None
+   #     Prior period sales dict with the same structure (optional).
+   #     If provided, diff vs prior is shown in the description.
+   # value_type : str
+   #     Either "Unit" or "Currency" (case-insensitive).
+   # months : list[str] or None
+   #     List of month labels to display. If None, uses global months_x.
+
 
     if months is None:
         months = months_x
@@ -915,7 +924,7 @@ def display_month_data_prod(
                 content=content,
                 description=desc,
             )
-
+"""
 
 # ------------------------------------------
 # PRODUCT METRICS - PROFIT AND AVERAGE PRICE
@@ -962,19 +971,19 @@ def calc_prod_metrics(prod_dict, product, bom_dict, prod_dict_prior=None):
     else:
         return prod_profit, profit_per_unit, prod_profit_last, avg_price, avg_price_last
 
-
+"""
 # ------------------------------------------------
 # DISPLAY FUNCTIONS FOR HOSES - REVENUE AND PROFIT
 # ------------------------------------------------
 
 def display_hose_data(hose_details1, hose_details2, hose_details3):
-    """
-    Display hose data for three years (currently 2025, 2024, 2023).
 
-    Each `hose_detailsX` is expected to be a list of 8 items:
-      - hose_detailsX[0..6]: dicts like {'5FT STD': [qty, rev], ...}
-      - hose_detailsX[7]: a list/tuple [qty, rev] for '100FT STD'
-    """
+    #Display hose data for three years (currently 2025, 2024, 2023).
+
+    #Each `hose_detailsX` is expected to be a list of 8 items:
+    #  - hose_detailsX[0..6]: dicts like {'5FT STD': [qty, rev], ...}
+    #  - hose_detailsX[7]: a list/tuple [qty, rev] for '100FT STD'
+    
     # Pair year labels with their corresponding data
     year_data = [
         ("2025", hose_details1),
@@ -1025,15 +1034,15 @@ def display_hose_data(hose_details1, hose_details2, hose_details3):
 
 
 def display_hose_data_profit(hose_details1, hose_details2, hose_details3):
-    """
-    Display hose profit data for 2025, 2024, 2023.
+    
+    #Display hose profit data for 2025, 2024, 2023.
 
-    Each hose_detailsX is expected to be a list of 8 items:
-      - hose_detailsX[0..6]: dicts like {'5FT STD': [qty, rev], ...}
-      - hose_detailsX[7]: [qty, rev] for '100FT STD' (we ignore qty/rev here
-        and compute profit based on prodTot* and bom_cost_hose).
-    Relies on globals: prodTot25, prodTot24, prodTot23, bom_cost_hose, calc_prod_metrics.
-    """
+    #Each hose_detailsX is expected to be a list of 8 items:
+     # - hose_detailsX[0..6]: dicts like {'5FT STD': [qty, rev], ...}
+      #- hose_detailsX[7]: [qty, rev] for '100FT STD' (we ignore qty/rev here
+       # and compute profit based on prodTot* and bom_cost_hose).
+    #Relies on globals: prodTot25, prodTot24, prodTot23, bom_cost_hose, calc_prod_metrics.
+    
 
     # Pair each year with: (hose_details, current_prod_tot, prior_prod_tot or None)
     year_data = [
@@ -1171,7 +1180,8 @@ def display_acc_data_profit():
                 value_last2[0] = int(value_last2[0])
                 ui.metric_card(title='{}'.format(item_last2), content='Total Profit: ${:,.2f}'.format(prod_profit), description='Profit per Unit: ${:,.2f}'.format(profit_per_unit), key=key2)
             key2 += 'ba'
-        
+"""        
+
 
 # ----------------------------------------------
 # GENEREATE REALTIME ANNUAL COMPARISON FUNCTIONS
@@ -1482,45 +1492,127 @@ def hist_annual_prod_totals(prod_annual_dict, prod_list, year_list):
     
     return prod_annual_dict
 
+def prep_data_context():
 
-# HISTORICAL HANDHELDS
-hhmk1_cust, hhmk1_annual = hist_product_data(df_hist.hh_mk1)
-hhmk2_cust, hhmk2_annual = hist_product_data(df_hist.hh_mk2)
+    rev_by_year = to_date_revenue(df)
 
-# HISTORICAL ACCESSORIES
-tc_cust, tc_annual = hist_product_data(df_hist.travel_case)
-tcog_cust, tcog_annual = hist_product_data(df_hist.travel_case_og)
-bp_cust, bp_annual = hist_product_data(df_hist.backpack)
-mfd_cust, mfd_annual = hist_product_data(df_hist.manifold)
-ctc_20_cust, ctc_20_annual = hist_product_data(df_hist.ctc_20)
-ctc_50_cust, ctc_50_annual = hist_product_data(df_hist.ctc_50)
-ledmk1_cust, ledmk1_annual = hist_product_data(df_hist.led_attachment_mk1)
-ledmk2_cust, ledmk2_annual = hist_product_data(df_hist.led_attachment_mk2)
-pwrpack_cust, pwrpack_annual = hist_product_data(df_hist.power_pack)
+    #td_26 = [rev_by_year[2026][0], rev_by_year[2026][1]]
+    td_25 = [rev_by_year[2025][0], rev_by_year[2025][1]]
+    td_24 = [rev_by_year[2024][0], rev_by_year[2024][1]]
+    td_23 = [rev_by_year[2023][0], rev_by_year[2023][1]]
+    td_22 = [rev_by_year[2022][0], rev_by_year[2022][1]]
+    
+    #td_26_tot = td_26[0] + td_26[1]
+    td_25_tot = td_25[0] + td_25[1]
+    td_24_tot = td_24[0] + td_24[1]
+    td_23_tot = td_23[0] + td_23[1]
+    td_22_tot = td_22[0] + td_22[1]
+    
+    sales_dict_23 = get_monthly_sales_v2(df, 2023)
+    total_23, web_23, ful_23, avg_23, magic23 = calc_monthly_totals_v2(sales_dict_23)
+    
+    sales_dict_24 = get_monthly_sales_v2(df, 2024)
+    total_24, web_24, ful_24, avg_24, magic24 = calc_monthly_totals_v2(sales_dict_24)
+    
+    sales_dict_25 = get_monthly_sales_v2(df, 2025)
+    total_25, web_25, ful_25, avg_25, magic25 = calc_monthly_totals_v2(sales_dict_25)
+    
+    #sales_dict_26 = get_monthly_sales_v2(df, 2026)
+    #total_26, web_26, ful_26, avg_26, magic26 = calc_monthly_totals_v2(sales_dict_26)
+    
+    
+    # ------------------------
+    # PREP DATA FOR PROCESSING
+    # ------------------------
+    
+    jet23, jet24, jet25, jet26, control23, control24, control25, control26, handheld23, handheld24, handheld25, handheld26, hose23, hose24, hose25, hose26, acc23, acc24, acc25, acc26 = collect_product_data(df)
+    
+    hose_detail26 = organize_hose_data(hose26)
+    hose_detail25 = organize_hose_data(hose25)
+    hose_detail24 = organize_hose_data(hose24)
+    hose_detail23 = organize_hose_data(hose23)
+    
+    prodTot23, prodTot24, prodTot25, prodTot26 = annual_product_totals()
+    
+    # CALCULATE MAGIC FX SALES DATA
+    mfx_rev, mfx_costs, mfx_profit = magic_sales_data()
+    
+    
+    # CALCULATE PRODUCT PROFIT
+    
+    #profit_26 = profit_by_type(['2026'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
+    profit_25 = profit_by_type(['2025'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
+    profit_24 = profit_by_type(['2024'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory']) + mfx_profit
+    profit_23 = profit_by_type(['2023'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
 
-# HISTORICAL JETS
-jet_og_cust, jet_og_annual = hist_product_data(df_hist.jets_og)
-pj_cust, pj_annual = hist_product_data(df_hist.pro_jet)
-pwj_cust, pwj_annual = hist_product_data(df_hist.power_jet)
-mjmk1_cust, mjmk1_annual = hist_product_data(df_hist.micro_jet_mk1)
-mjmk2_cust, mjmk2_annual = hist_product_data(df_hist.micro_jet_mk2)
-ccmk1_cust, ccmk1_annual = hist_product_data(df_hist.cryo_clamp_mk1)
-ccmk2_cust, ccmk2_annual = hist_product_data(df_hist.cryo_clamp_mk2)
-qj_cust, qj_annual = hist_product_data(df_hist.quad_jet)
 
-# HISTORICAL CONTROLLERS
-dmx_cntl_cust, dmx_cntl_annual = hist_product_data(df_hist.dmx_controller)
-lcd_cntl_cust, lcd_cntl_annual = hist_product_data(df_hist.lcd_controller)
-tbmk1_cust, tbmk1_annual = hist_product_data(df_hist.the_button_mk1)
-tbmk2_cust, tbmk2_annual = hist_product_data(df_hist.the_button_mk2)
-sm_cust, sm_annual = hist_product_data(df_hist.shomaster)
-ss_cust, ss_annual = hist_product_data(df_hist.shostarter)
-pwr_cntl_cust, pwr_cntl_annual = hist_product_data(df_hist.power_controller)
+    
+    # HISTORICAL HANDHELDS
+    hhmk1_cust, hhmk1_annual = hist_product_data(df_hist.hh_mk1)
+    hhmk2_cust, hhmk2_annual = hist_product_data(df_hist.hh_mk2)
+    
+    # HISTORICAL ACCESSORIES
+    tc_cust, tc_annual = hist_product_data(df_hist.travel_case)
+    tcog_cust, tcog_annual = hist_product_data(df_hist.travel_case_og)
+    bp_cust, bp_annual = hist_product_data(df_hist.backpack)
+    mfd_cust, mfd_annual = hist_product_data(df_hist.manifold)
+    ctc_20_cust, ctc_20_annual = hist_product_data(df_hist.ctc_20)
+    ctc_50_cust, ctc_50_annual = hist_product_data(df_hist.ctc_50)
+    ledmk1_cust, ledmk1_annual = hist_product_data(df_hist.led_attachment_mk1)
+    ledmk2_cust, ledmk2_annual = hist_product_data(df_hist.led_attachment_mk2)
+    pwrpack_cust, pwrpack_annual = hist_product_data(df_hist.power_pack)
+    
+    # HISTORICAL JETS
+    jet_og_cust, jet_og_annual = hist_product_data(df_hist.jets_og)
+    pj_cust, pj_annual = hist_product_data(df_hist.pro_jet)
+    pwj_cust, pwj_annual = hist_product_data(df_hist.power_jet)
+    mjmk1_cust, mjmk1_annual = hist_product_data(df_hist.micro_jet_mk1)
+    mjmk2_cust, mjmk2_annual = hist_product_data(df_hist.micro_jet_mk2)
+    ccmk1_cust, ccmk1_annual = hist_product_data(df_hist.cryo_clamp_mk1)
+    ccmk2_cust, ccmk2_annual = hist_product_data(df_hist.cryo_clamp_mk2)
+    qj_cust, qj_annual = hist_product_data(df_hist.quad_jet)
+    
+    # HISTORICAL CONTROLLERS
+    dmx_cntl_cust, dmx_cntl_annual = hist_product_data(df_hist.dmx_controller)
+    lcd_cntl_cust, lcd_cntl_annual = hist_product_data(df_hist.lcd_controller)
+    tbmk1_cust, tbmk1_annual = hist_product_data(df_hist.the_button_mk1)
+    tbmk2_cust, tbmk2_annual = hist_product_data(df_hist.the_button_mk2)
+    sm_cust, sm_annual = hist_product_data(df_hist.shomaster)
+    ss_cust, ss_annual = hist_product_data(df_hist.shostarter)
+    pwr_cntl_cust, pwr_cntl_annual = hist_product_data(df_hist.power_controller)
+    
+    # HISTORICAL CONFETTI
+    blwr_cust, blwr_annual = hist_product_data(df_hist.confetti_blower)
 
-# HISTORICAL CONFETTI
-blwr_cust, blwr_annual = hist_product_data(df_hist.confetti_blower)
+    return {
+        "td_25": td_25, "td_24": td_24, "td_23": td_23, "td_22": td_22, 
+        "td_25_tot": td_25_tot, "td_24_tot": td_24_tot, "td_23_tot": td_23_tot, "td_22_tot": td_22_tot,
+        "sales_dict_25": sales_dict_25, "sales_dict_24": sales_dict_24, "sales_dict_23": sales_dict_23,
+        "total_25": total_25, "web_25": web_25, "ful_25": ful_25, "avg_25": avg_25, "magic25": magic25,
+        "total_24": total_24, "web_24": web_24, "ful_24": ful_24, "avg_24": avg_24, "magic24": magic24,
+        "total_23": total_23, "web_23": web_23, "ful_23": ful_23, "avg_23": avg_23, "magic23": magic23,
+        "jet26": jet26, "control26": control26, "handheld26": handheld26, "hose26": hose26, "acc26": acc26,
+        "jet25": jet25, "control25": control25, "handheld25": handheld25, "hose25": hose25, "acc25": acc25,
+        "jet24": jet24, "control24": control24, "handheld24": handheld24, "hose24": hose24, "acc24": acc24,
+        "jet23": jet23, "control23": control23, "handheld23": handheld23, "hose23": hose23, "acc23": acc23,
+        "hose_detail26": hose_detail26, "hose_detail25": hose_detail25, "hose_detail24": hose_detail24, "hose_detail23": hose_detail23,
+        "prodTot26": prodTot26, "prodTot25": prodTot25, "prodTot24": prodTot24, "prodTot23": prodTot23,
+        "mfx_rev": mfx_rev, "mfx_costs": mfx_costs, "mfx_profit": mfx_profit, "profit_25": profit_25, "profit_24": profit_24,
+        "profit_23": profit_23, 
+        "hhmk1_cust": hhmk1_cust, "hhmk1_annual": hhmk1_annual, "hhmk2_cust": hhmk2_cust, "hhmk2_annual": hhmk2_annual, "tc_cust": tc_cust, 
+        "tc_annual": tc_annual, "tcog_cust": tcog_cust, "tcog_annual": tcog_annual, "bp_cust": bp_cust, "bp_annual": bp_annual, "mfd_cust": mfd_cust, 
+        "mfd_annual": mfd_annual, "ctc_20_cust": ctc_20_cust, "ctc_20_annual": ctc_20_annual, "ctc_50_cust": ctc_50_cust, "ctc_50_annual": ctc_50_annual, "ledmk1_cust": ledmk1_cust, "ledmk1_annual": ledmk1_annual, 
+        "ledmk2_cust": ledmk2_cust, "ledmk2_annual": ledmk2_annual, "pwrpack_cust": pwrpack_cust, "pwrpack_annual": pwrpack_annual, "jet_og_cust": jet_og_cust, "jet_og_annual": jet_og_annual, 
+        "pj_cust": pj_cust, "pj_annual": pj_annual, "pwj_cust": pwj_cust, "pwj_annual": pwj_annual, "mjmk1_cust": mjmk1_cust, "mjmk1_annual": mjmk1_annual, "mjmk2_cust": mjmk2_cust, 
+        "mjmk2_annual": mjmk2_annual, "ccmk1_cust": ccmk1_cust, "ccmk1_annual": ccmk1_annual, "ccmk2_cust": ccmk2_cust, "ccmk2_annual": ccmk2_annual, "qj_cust": qj_cust, 
+        "qj_annual": qj_annual, "dmx_cntl_cust": dmx_cntl_cust, "dmx_cntl_annual": dmx_cntl_annual, "lcd_cntl_cust": lcd_cntl_cust, "lcd_cntl_annual": lcd_cntl_annual, "tbmk1_cust": tbmk1_cust, 
+        "tbmk1_annual": tbmk1_annual, "tbmk2_cust": tbmk2_cust, "tbmk2_annual": tbmk2_annual, "sm_cust": sm_cust, "sm_annual": sm_annual, "ss_cust": ss_cust, "ss_annual": ss_annual, "pwr_cntl_cust": pwr_cntl_cust, 
+        "pwr_cntl_annual": pwr_cntl_annual, "blwr_cust": blwr_cust, "blwr_annual": blwr_annual
+    
+    }
 
 
+"""
 # -----------------------------------
 # RENDER FUNCTION FOR DISPLAY IN MAIN
 # -----------------------------------
@@ -2667,3 +2759,5 @@ def render_products():
                     idx += 1
             
         style_metric_cards()
+
+"""

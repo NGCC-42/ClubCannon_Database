@@ -58,12 +58,8 @@ from logic.products import (
     organize_hose_data, 
     magic_sales,
     product_annual_totals,
-    display_month_data_prod,
-    display_hose_data,
-    display_hose_data_profit,
     calc_prod_metrics,
     annual_product_totals,
-    display_acc_data,
     to_date_product,
     to_date_product_rev,
     profit_by_type,
@@ -71,6 +67,14 @@ from logic.products import (
     convert_prod_select,
     convert_prod_select_profit,
     hist_product_data,
+    prep_data_context
+)
+
+from modules.product_reports import (
+    display_month_data_prod,
+    display_hose_data,
+    display_hose_data_profit,
+    display_acc_data,
     render_products
 )
 
@@ -135,7 +139,6 @@ def main():
     # ----------------------------------
     
     df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist, unique_customer_list, master_customer_list, wholesale_list = load_all_data()
-
     
     # --------------------------
     # MAKE LIST OF PRODUCT TYPES
@@ -249,7 +252,18 @@ def main():
 
     #sales_dict_26 = get_monthly_sales_v2(df, 2026)
     #total_26, web_26, ful_26, avg_26, magic26 = calc_monthly_totals_v2(sales_dict_26)
-    
+
+
+    # -----------------------------------
+    # CREATE PRODUCT REPORTS DATA CONTEXT
+    # -----------------------------------
+
+    product_ctx = prep_data_context()
+
+
+    # -------
+    # MODULES
+    # -------
     
     if task_choice == 'Dashboard':
     
@@ -286,11 +300,11 @@ def main():
 
     
     if task_choice == 'Product Reports':
-
+ 
         # ----------------------
         # RENDER PRODUCT REPORTS 
         # ----------------------
-        render_products()
+        render_products(product_ctx, wholesale_list, bom_cost_jet, bom_cost_control, bom_cost_hh, bom_cost_hose, bom_cost_acc, bom_cost_mfx)
             
     
     if task_choice == 'Customer Details':

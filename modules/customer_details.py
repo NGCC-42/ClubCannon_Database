@@ -21,7 +21,6 @@ from logic.analytics import (
     hist_cust_data,
     percent_of_change
 )
-
 from ui.components import style_metric_cards
 from logic.customer_logic import compute_customer_details
 
