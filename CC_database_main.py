@@ -104,7 +104,8 @@ from modules.dashboard import (
 )
 
 from ui.components import (
-    style_metric_cards
+    style_metric_cards,
+    apply_selectbox_theme_fix
 )
 
 
@@ -174,7 +175,8 @@ def main():
                 }
             )
     
-
+    apply_selectbox_theme_fix()
+    
     # ---------------------
     # BOM COST DICTIONARIES
     # ---------------------

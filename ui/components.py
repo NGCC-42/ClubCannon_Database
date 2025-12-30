@@ -64,3 +64,32 @@ def style_metric_cards(
         unsafe_allow_html=True,
     )
 
+# --------------------------------------------------
+# CSS OVERRIDE FOR SELECTBOX TO FOLLOW PRIMARY COLOR
+# --------------------------------------------------
+
+def apply_selectbox_theme_fix():
+    primary = st.get_option("theme.primaryColor") or "#FF4B4B"
+    css = f"""
+    <style>
+    /* Selectbox + Multiselect outer border */
+    div[data-baseweb="select"] > div {{
+        border-color: {primary} !important;
+    }}
+
+    /* Focus ring */
+    div[data-baseweb="select"] > div:focus-within {{
+        border-color: {primary} !important;
+        box-shadow: 0 0 0 0.15rem {primary}33 !important; /* 33 = ~20% alpha */
+    }}
+
+    /* Dropdown option hover + selected */
+    div[role="listbox"] div[role="option"]:hover {{
+        background-color: {primary}22 !important; /* ~13% */
+    }}
+    div[role="listbox"] div[role="option"][aria-selected="true"] {{
+        background-color: {primary}33 !important; /* ~20% */
+    }}
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
