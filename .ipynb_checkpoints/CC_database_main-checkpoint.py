@@ -226,13 +226,13 @@ def main():
     
     rev_by_year = to_date_revenue(df)
     
-    #td_26 = [rev_by_year[2026][0], rev_by_year[2026][1]]
+    td_26 = [rev_by_year[2026][0], rev_by_year[2026][1]]
     td_25 = [rev_by_year[2025][0], rev_by_year[2025][1]]
     td_24 = [rev_by_year[2024][0], rev_by_year[2024][1]]
     td_23 = [rev_by_year[2023][0], rev_by_year[2023][1]]
     td_22 = [rev_by_year[2022][0], rev_by_year[2022][1]]
     
-    #td_26_tot = td_26[0] + td_26[1]
+    td_26_tot = td_26[0] + td_26[1]
     td_25_tot = td_25[0] + td_25[1]
     td_24_tot = td_24[0] + td_24[1]
     td_23_tot = td_23[0] + td_23[1]
@@ -252,8 +252,8 @@ def main():
     sales_dict_25 = get_monthly_sales_v2(df, 2025)
     total_25, web_25, ful_25, avg_25, magic25 = calc_monthly_totals_v2(sales_dict_25)
 
-    #sales_dict_26 = get_monthly_sales_v2(df, 2026)
-    #total_26, web_26, ful_26, avg_26, magic26 = calc_monthly_totals_v2(sales_dict_26)
+    sales_dict_26 = get_monthly_sales_v2(df, 2026)
+    total_26, web_26, ful_26, avg_26, magic26 = calc_monthly_totals_v2(sales_dict_26)
 
 
     # -----------------------------------
@@ -274,7 +274,7 @@ def main():
         # COMPILE DATA FOR SALES REPORTS 
         # ------------------------------
         
-        td_sales25, td_sales24, td_sales23 = get_monthly_sales_ytd()
+        td_sales26, td_sales25, td_sales24, td_sales23 = get_monthly_sales_ytd()
         
         total_22 = 1483458.64
         avg_22 = 147581.12
@@ -298,7 +298,7 @@ def main():
         # ---------------------
         # RENDER DASHBOARD PAGE 
         # ---------------------
-        render_dashboard(td_25, td_24, td_23, td_22, sales_dict_25, sales_dict_24, sales_dict_23, td_sales25, td_sales24, td_sales23)
+        render_dashboard(td_26, td_25, td_24, td_23, td_22, sales_dict_26, sales_dict_25, sales_dict_24, sales_dict_23, td_sales25, td_sales24, td_sales23)
 
     
     if task_choice == 'Product Reports':

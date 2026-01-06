@@ -108,18 +108,19 @@ def hist_td_rev(year: int) -> float:
     df_loc = df_loc.dropna(subset=["order_date"])
 
     # Build your "to-date" anchors
-    td24 = today - timedelta(days=366)
-    td23 = today - timedelta(days=731)
-    td22 = today - timedelta(days=1096)
-    td21 = today - timedelta(days=1461)
-    td20 = today - timedelta(days=1826)
-    td19 = today - timedelta(days=2191)
-    td18 = today - timedelta(days=2557)
-    td17 = today - timedelta(days=2922)
-    td16 = today - timedelta(days=3287)
-    td15 = today - timedelta(days=3652)
-    td14 = today - timedelta(days=4018)
-    td13 = today - timedelta(days=4383)
+    td25 = today - timedelta(days=366)
+    td24 = today - timedelta(days=731)
+    td23 = today - timedelta(days=1096)
+    td22 = today - timedelta(days=1461)
+    td21 = today - timedelta(days=1826)
+    td20 = today - timedelta(days=2191)
+    td19 = today - timedelta(days=2557)
+    td18 = today - timedelta(days=2922)
+    td17 = today - timedelta(days=3287)
+    td16 = today - timedelta(days=3652)
+    td15 = today - timedelta(days=4018)
+    td14 = today - timedelta(days=4383)
+    td13 = today - timedelta(days=4748)
 
     date_dict = {
         2013: td13,
@@ -134,6 +135,7 @@ def hist_td_rev(year: int) -> float:
         2022: td22,
         2023: td23,
         2024: td24,
+        2025: td25
     }
 
     # Guard in case someone calls with a year you didn't add
@@ -518,7 +520,8 @@ sales13, sales14, sales15, sales16, sales17, sales18, sales19, sales20, sales21,
 wvr_23_months = get_monthly_sales_wvr(df, 2023)
 wvr_24_months = get_monthly_sales_wvr(df, 2024)
 wvr_25_months = get_monthly_sales_wvr(df, 2025)
-wvr_25_ytd, wvr_24_ytd, wvr_23_ytd = get_monthly_sales_wvr_ytd()
+wvr_26_months = get_monthly_sales_wvr(df, 2026)
+wvr_26_ytd, wvr_25_ytd, wvr_24_ytd, wvr_23_ytd = get_monthly_sales_wvr_ytd()
 
 wvr_23_totals = wholesale_retail_totals(wvr_23_months)
 wvr_23_totals_ytd = wholesale_retail_totals(wvr_23_ytd)
@@ -526,11 +529,14 @@ wvr_24_totals = wholesale_retail_totals(wvr_24_months)
 wvr_23_totals_ytd = wholesale_retail_totals(wvr_24_ytd)
 wvr_24_totals = wholesale_retail_totals(wvr_24_months)
 wvr_25_totals_ytd = wholesale_retail_totals(wvr_25_ytd)
+wvr_25_totals = wholesale_retail_totals(wvr_25_months)
+wvr_26_totals_ytd = wholesale_retail_totals(wvr_26_ytd)
 
 # ----------------------------
 # QUARTERLY SALES CALCULATIONS
 # ----------------------------
 
+q1_26, q2_26, q3_26, q4_26 = quarterly_sales(2026)
 q1_25, q2_25, q3_25, q4_25 = quarterly_sales(2025)
 q1_24, q2_24, q3_24, q4_24 = quarterly_sales(2024)
 q1_23, q2_23, q3_23, q4_23 = quarterly_sales(2023)
@@ -549,20 +555,20 @@ total_24, web_24, ful_24, avg_24, magic24 = calc_monthly_totals_v2(sales_dict_24
 sales_dict_25 = get_monthly_sales_v2(df, 2025)
 total_25, web_25, ful_25, avg_25, magic25 = calc_monthly_totals_v2(sales_dict_25)
 
-#sales_dict_26 = get_monthly_sales_v2(df, 2026)
-#total_26, web_26, ful_26, avg_26, magic26 = calc_monthly_totals_v2(sales_dict_26)
+sales_dict_26 = get_monthly_sales_v2(df, 2026)
+total_26, web_26, ful_26, avg_26, magic26 = calc_monthly_totals_v2(sales_dict_26)
 
 # ---------------------------------------------------
 # REALTIME TO-DATE SALES CALCULATIONS FOR COMPARISON
 # ---------------------------------------------------
 
-td_sales25, td_sales24, td_sales23 = get_monthly_sales_ytd()
+td_sales26, td_sales25, td_sales24, td_sales23 = get_monthly_sales_ytd()
 
 # -------------------
 # PROFIT CALCULATIONS
 # -------------------
 
-#profit_26 = profit_by_type(['2026'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
+profit_26 = profit_by_type(['2026'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
 profit_25 = profit_by_type(['2025'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
 profit_24 = profit_by_type(['2024'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory']) + mfx_profit
 profit_23 = profit_by_type(['2023'], ['Jet', 'Control', 'Handheld', 'Hose', 'Accessory'])
@@ -609,6 +615,7 @@ def graph_data():
     y2023 = []
     y2024 = []
     y2025 = []
+    y2026 = []
 
     for key, val in sales13.items():
         y2013.append(val[0][0] + val[1][0])
@@ -636,29 +643,32 @@ def graph_data():
         y2024.append(val[0][0] + val[1][0])
     for key, val in sales_dict_25.items():
         y2025.append(val[0][0] + val[1][0])
+    for key, val in sales_dict_26.items():
+        y2026.append(val[0][0] + val[1][0])
 
-    return y2013, y2014, y2015, y2016, y2017, y2018, y2019, y2020, y2021, y2022, y2023, y2024, y2025
+    return y2013, y2014, y2015, y2016, y2017, y2018, y2019, y2020, y2021, y2022, y2023, y2024, y2025, y2026
 
 
-y2013, y2014, y2015, y2016, y2017, y2018, y2019, y2020, y2021, y2022, y2023, y2024, y2025 = graph_data()
+y2013, y2014, y2015, y2016, y2017, y2018, y2019, y2020, y2021, y2022, y2023, y2024, y2025, y2026 = graph_data()
 
 
 # ------------------------------------
 # RENDER FUNCTION TO DISPLAY DASHBOARD
 # ------------------------------------
 
-def render_dashboard(td_25, td_24, td_23, td_22, sales_dict_25, sales_dict_24, sales_dict_23, td_sales25, td_sales24, td_sales23):
+def render_dashboard(td_26, td_25, td_24, td_23, td_22, sales_dict_26, sales_dict_25, sales_dict_24, sales_dict_23, td_sales25, td_sales24, td_sales23):
 
     col1, col2, col3 = st.columns([.28, .44, .28], gap='medium')
     colx, coly, colz = st.columns([.28, .44, .28], gap='medium')
     
     with col2:
         
-        year_select = ui.tabs(options=['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013'], default_value='2025')    
+        year_select = ui.tabs(options=['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013'], default_value='2026')    
         
         #tot_vs_ytd = ui.tabs(options=['Totals', 'YTD'], default_value='Totals')
 
     series_by_year = {
+        '2026': y2026,
         '2025': y2025,
         '2024': y2024,
         '2023': y2023,
@@ -684,26 +694,96 @@ def render_dashboard(td_25, td_24, td_23, td_22, sales_dict_25, sales_dict_24, s
         
         cola, colb, colc = st.columns(3)
 
-        cola.metric('**2025 Total**', '${:,}'.format(int(td_25[1] + td_25[0])), percent_of_change((td_24[0] + td_24[1]), (td_25[0] + td_25[1])))
-        cola.metric('**2025 Web**', '${:,}'.format(int(td_25[0])), percent_of_change(td_24[0], td_25[0]))
-        cola.metric('**2025 Fulcrum**', '${:,}'.format(int(td_25[1])), percent_of_change(td_24[1], td_25[1]))
+        cola.metric('**2026 Total**', '${:,}'.format(int(td_26[1] + td_26[0])), percent_of_change((td_25[0] + td_25[1]), (td_26[1] + td_26[0])))
+        cola.metric('**2026 Web**', '${:,}'.format(int(td_26[0])), percent_of_change(td_25[0], td_26[0]))
+        cola.metric('**2026 Fulcrum**', '${:,}'.format(int(td_26[1])), percent_of_change(td_25[1], td_26[1]))
+
+        colb.metric('**2025 Total**', '${:,}'.format(int(td_25[1] + td_25[0])), percent_of_change((td_24[0] + td_24[1]), (td_25[0] + td_25[1])))
+        colb.metric('**2025 Web**', '${:,}'.format(int(td_25[0])), percent_of_change(td_24[0], td_25[0]))
+        colb.metric('**2025 Fulcrum**', '${:,}'.format(int(td_25[1])), percent_of_change(td_24[1], td_25[1]))
         
-        colb.metric('**2024 Total**', '${:,}'.format(int(td_24[1] + td_24[0])), percent_of_change((td_23[0] + td_23[1]), (td_24[0] + td_24[1])))
-        colb.metric('**2024 Web**', '${:,}'.format(int(td_24[0])), percent_of_change(td_23[0], td_24[0]))
-        colb.metric('**2024 Fulcrum**', '${:,}'.format(int(td_24[1])), percent_of_change(td_23[1], td_24[1]))
+        colc.metric('**2024 Total**', '${:,}'.format(int(td_24[1] + td_24[0])), percent_of_change((td_23[0] + td_23[1]), (td_24[0] + td_24[1])))
+        colc.metric('**2024 Web**', '${:,}'.format(int(td_24[0])), percent_of_change(td_23[0], td_24[0]))
+        colc.metric('**2024 Fulcrum**', '${:,}'.format(int(td_24[1])), percent_of_change(td_23[1], td_24[1]))
         
-        colc.metric('**2023 Total**', '${:,}'.format(int(td_23[1] + td_23[0])), percent_of_change(hist_td_rev(2022), (td_23[1] + td_23[0])))
-        colc.metric('**2023 Web**', '${:,}'.format(int(td_23[0])), percent_of_change(hist_td_rev(2022), (td_23[1] + td_23[0])))
-        colc.metric('**2023 Fulcrum**', '${:,}'.format(int(td_23[1])), percent_of_change(hist_td_rev(2022), (td_23[1] + td_23[0])))
 
         style_metric_cards()
 
-
     with col2:
         
-        if year_select == '2025':
+        if year_select == '2026':
             
-            display_metrics(sales_dict_25, td_sales24, wvr1=wvr_25_months, wvr2=wvr_24_ytd)
+            display_metrics(sales_dict_26, td_sales25, wvr1=wvr_26_months, wvr2=wvr_25_ytd)
+    
+            with col3:
+                
+                st.header('Sales by Month')
+                plot_bar_chart_ms(format_for_chart_ms(sales_dict_26))
+
+            with colz:
+                
+                st.header('Quarterly Sales')
+                
+                col6, col7, col8 = st.columns([.3, .4, .3])
+                
+                col6.metric('**Q1 Web Sales**', '${:,}'.format(int(q1_26[0])), percent_of_change(q1_25[0], q1_26[0]))
+                col7.metric('**Q1 Total Sales**', '${:,}'.format(int(q1_26[0] + q1_26[1])), percent_of_change((q1_25[0] + q1_25[1]), (q1_26[0] + q1_26[1])))
+                col8.metric('**Q1 Fulcrum Sales**', '${:,}'.format(int(q1_26[1])), percent_of_change(q1_25[1], q1_26[1]))
+                
+                col6.metric('**Q2 Web Sales**', '${:,}'.format(int(q2_26[0])), percent_of_change(q2_25[0], q2_26[0]))
+                col7.metric('**Q2 Total Sales**', '${:,}'.format(int(q2_26[0] + q2_26[1])), percent_of_change((q2_25[0] + q2_25[1]), (q2_26[0] + q2_26[1])))
+                col8.metric('**Q2 Fulcrum Sales**', '${:,}'.format(int(q2_26[1])), percent_of_change(q2_25[1], q2_26[1]))
+                
+                col6.metric('**Q3 Web Sales**', '${:,}'.format(int(q3_26[0])), percent_of_change(q3_25[0], q3_26[0]))
+                col7.metric('**Q3 Total Sales**', '${:,}'.format(int(q3_26[0] + q3_26[1])), percent_of_change((q3_25[0] + q3_25[1]), (q3_26[0] + q3_26[1])))
+                col8.metric('**Q3 Fulcrum Sales**', '${:,}'.format(int(q3_26[1])), percent_of_change(q3_24[1], q3_25[1]))
+    
+                col6.metric('**Q4 Web Sales**', '${:,}'.format(int(q4_26[0])), percent_of_change(q4_25[0], q4_26[0]))
+                col7.metric('**Q4 Total Sales**', '${:,}'.format(int(q4_26[0] + q4_26[1])), percent_of_change((q4_25[0] + q4_25[1]), (q4_26[0] + q4_26[1])))
+                col8.metric('**Q4 Fulcrum Sales**', '${:,}'.format(int(q4_26[1])), percent_of_change(q4_25[1], q4_26[1]))
+    
+            with coly:
+                months[0] = 'Overview'
+                focus = st.selectbox('', options=months, key='Focus25')
+        
+                if focus == 'Overview':
+                    display_month_data_x(sales_dict_26, sales_dict_25)
+                elif focus == 'January':
+                    display_metrics(sales_dict_26, sales_dict_25, 'January', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                elif focus == 'February':
+                    display_metrics(sales_dict_26, sales_dict_25, 'February', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                elif focus == 'March':
+                    display_metrics(sales_dict_26, sales_dict_25, 'March', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                elif focus == 'April':
+                    display_metrics(sales_dict_26, sales_dict_25, 'April', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                elif focus == 'May':
+                    display_metrics(sales_dict_26, sales_dict_25, 'May', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                elif focus == 'June':
+                    display_metrics(sales_dict_26, sales_dict_25, 'June', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                elif focus == 'July':
+                    display_metrics(sales_dict_26, sales_dict_25, 'July', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                elif focus == 'August':
+                    display_metrics(sales_dict_26, sales_dict_25, 'August', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                elif focus == 'September':
+                    display_metrics(sales_dict_26, sales_dict_25, 'September', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                elif focus == 'October':
+                    display_metrics(sales_dict_26, sales_dict_25, 'October', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                elif focus == 'November':
+                    display_metrics(sales_dict_26, sales_dict_25, 'November', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                else:
+                    display_metrics(sales_dict_26, sales_dict_25, 'December', wvr1=wvr_26_months, wvr2=wvr_25_months)
+                    
+        
+        if year_select == '2025':
+
+            with col2:
+                tot_vs_ytd = ui.tabs(options=['Totals', 'YTD'], default_value='Totals')
+                
+            if tot_vs_ytd == 'Totals':
+                display_metrics(sales_dict_25, td_sales24, wvr1=wvr_25_months, wvr2=wvr_24_ytd)
+            else:
+                display_metrics(td_sales25, td_sales24, wvr1=wvr_25_ytd, wvr2=wvr_24_ytd)
+            
     
             with col3:
                 
@@ -762,6 +842,7 @@ def render_dashboard(td_25, td_24, td_23, td_22, sales_dict_25, sales_dict_24, s
                     display_metrics(sales_dict_25, sales_dict_24, 'November', wvr1=wvr_25_months, wvr2=wvr_24_months)
                 else:
                     display_metrics(sales_dict_25, sales_dict_24, 'December', wvr1=wvr_25_months, wvr2=wvr_24_months)
+                    
 
         elif year_select == '2024':
 

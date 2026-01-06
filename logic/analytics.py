@@ -158,6 +158,7 @@ def get_monthly_sales_wvr_ytd():
     sales_dict = {'January': [0, 0], 'February': [0, 0], 'March': [0, 0], 'April': [0, 0], 'May': [0, 0], 'June': [0, 0], 'July': [0, 0], 'August': [0, 0], 'September': [0, 0], 'October': [0, 0], 'November': [0, 0], 'December': [0, 0]}
     sales_dict_minus1 = {'January': [0, 0], 'February': [0, 0], 'March': [0, 0], 'April': [0, 0], 'May': [0, 0], 'June': [0, 0], 'July': [0, 0], 'August': [0, 0], 'September': [0, 0], 'October': [0, 0], 'November': [0, 0], 'December': [0, 0]}
     sales_dict_minus2 = {'January': [0, 0], 'February': [0, 0], 'March': [0, 0], 'April': [0, 0], 'May': [0, 0], 'June': [0, 0], 'July': [0, 0], 'August': [0, 0], 'September': [0, 0], 'October': [0, 0], 'November': [0, 0], 'December': [0, 0]}
+    sales_dict_minus3 = {'January': [0, 0], 'February': [0, 0], 'March': [0, 0], 'April': [0, 0], 'May': [0, 0], 'June': [0, 0], 'July': [0, 0], 'August': [0, 0], 'September': [0, 0], 'October': [0, 0], 'November': [0, 0], 'December': [0, 0]}
 
     idx = 0
 
@@ -165,8 +166,14 @@ def get_monthly_sales_wvr_ytd():
 
         order_date = df.iloc[idx].order_date
         month = num_to_month(df.iloc[idx].order_date.month)
+
+        if three_years_ago >= order_date >= beginning_of_year(three_years_ago):
+            if cust in wholesale_list:
+                sales_dict_minus3[month][0] += df.iloc[idx].total_line_item_spend
+            else:
+                sales_dict_minus3[month][1] += df.iloc[idx].total_line_item_spend
     
-        if two_years_ago >= order_date >= beginning_of_year(two_years_ago):
+        elif two_years_ago >= order_date >= beginning_of_year(two_years_ago):
             if cust in wholesale_list:
                 sales_dict_minus2[month][0] += df.iloc[idx].total_line_item_spend
             else:
@@ -186,7 +193,7 @@ def get_monthly_sales_wvr_ytd():
                 
         idx += 1
     
-    return sales_dict, sales_dict_minus1, sales_dict_minus2
+    return sales_dict, sales_dict_minus1, sales_dict_minus2, sales_dict_minus3
 
 
 # ----------------------------------------------------
@@ -243,10 +250,14 @@ def get_monthly_sales_ytd():
     unique_sales_orders = []
     unique_sales_orders_minus1 = []
     unique_sales_orders_minus2 = []
+    unique_sales_orders_minus3 = []
+    
 
     sales_dict = {'January': [[0, 0], [0, 0], [0]], 'February': [[0, 0], [0, 0], [0]], 'March': [[0, 0], [0, 0], [0]], 'April': [[0, 0], [0, 0], [0]], 'May': [[0, 0], [0, 0], [0]], 'June': [[0, 0], [0, 0], [0]], 'July': [[0, 0], [0, 0], [0]], 'August': [[0, 0], [0, 0], [0]], 'September': [[0, 0], [0, 0], [0]], 'October': [[0, 0], [0, 0], [0]], 'November': [[0, 0], [0, 0], [0]], 'December': [[0, 0], [0, 0], [0]]}
     sales_dict_minus1 = {'January': [[0, 0], [0, 0], [0]], 'February': [[0, 0], [0, 0], [0]], 'March': [[0, 0], [0, 0], [0]], 'April': [[0, 0], [0, 0], [0]], 'May': [[0, 0], [0, 0], [0]], 'June': [[0, 0], [0, 0], [0]], 'July': [[0, 0], [0, 0], [0]], 'August': [[0, 0], [0, 0], [0]], 'September': [[0, 0], [0, 0], [0]], 'October': [[0, 0], [0, 0], [0]], 'November': [[0, 0], [0, 0], [0]], 'December': [[0, 0], [0, 0], [0]]}
     sales_dict_minus2 = {'January': [[0, 0], [0, 0], [0]], 'February': [[0, 0], [0, 0], [0]], 'March': [[0, 0], [0, 0], [0]], 'April': [[0, 0], [0, 0], [0]], 'May': [[0, 0], [0, 0], [0]], 'June': [[0, 0], [0, 0], [0]], 'July': [[0, 0], [0, 0], [0]], 'August': [[0, 0], [0, 0], [0]], 'September': [[0, 0], [0, 0], [0]], 'October': [[0, 0], [0, 0], [0]], 'November': [[0, 0], [0, 0], [0]], 'December': [[0, 0], [0, 0], [0]]}
+    sales_dict_minus3 = {'January': [[0, 0], [0, 0], [0]], 'February': [[0, 0], [0, 0], [0]], 'March': [[0, 0], [0, 0], [0]], 'April': [[0, 0], [0, 0], [0]], 'May': [[0, 0], [0, 0], [0]], 'June': [[0, 0], [0, 0], [0]], 'July': [[0, 0], [0, 0], [0]], 'August': [[0, 0], [0, 0], [0]], 'September': [[0, 0], [0, 0], [0]], 'October': [[0, 0], [0, 0], [0]], 'November': [[0, 0], [0, 0], [0]], 'December': [[0, 0], [0, 0], [0]]}
+
 
     idx = 0
 
@@ -257,6 +268,13 @@ def get_monthly_sales_ytd():
         month = num_to_month(df.iloc[idx].order_date.month)
             
         if df.iloc[idx].channel[0] == 'F':
+
+            if three_years_ago.date() >= order_date.date() >= beginning_of_year(three_years_ago).date():
+                sales_dict_minus3[month][0][0] += df.iloc[idx].total_line_item_spend
+                if sale not in unique_sales_orders_minus3:
+                    sales_dict_minus3[month][0][1] += 1
+                    unique_sales_orders_minus3.append(sale)
+                    
             if two_years_ago.date() >= order_date.date() >= beginning_of_year(two_years_ago).date():
                 sales_dict_minus2[month][0][0] += df.iloc[idx].total_line_item_spend
                 if sale not in unique_sales_orders_minus2:
@@ -276,6 +294,15 @@ def get_monthly_sales_ytd():
                     unique_sales_orders.append(sale)
 
         else:
+
+            if three_years_ago.date() >= order_date.date() >= beginning_of_year(three_years_ago).date():
+                sales_dict_minus3[month][1][0] += df.iloc[idx].total_line_item_spend 
+                if df.iloc[idx].line_item[:5] == 'Magic' or df.iloc[idx].line_item[:3] == 'MFX':
+                    sales_dict_minus3[month][2][0] += df.iloc[idx].total_line_item_spend
+                if sale not in unique_sales_orders_minus3:
+                    sales_dict_minus3[month][1][1] += 1
+                    unique_sales_orders_minus3.append(sale)
+                    
             if two_years_ago.date() >= order_date.date() >= beginning_of_year(two_years_ago).date():
                 sales_dict_minus2[month][1][0] += df.iloc[idx].total_line_item_spend 
                 if df.iloc[idx].line_item[:5] == 'Magic' or df.iloc[idx].line_item[:3] == 'MFX':
@@ -302,7 +329,7 @@ def get_monthly_sales_ytd():
 
         idx += 1
 
-    return sales_dict, sales_dict_minus1, sales_dict_minus2
+    return sales_dict, sales_dict_minus1, sales_dict_minus2, sales_dict_minus3
 
 
 # ----------------------
