@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import openpyxl
 import streamlit_shadcn_ui as ui
-#from streamlit_extras.metric_cards import style_metric_cards
+from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_option_menu import option_menu
 #from fpdf import FPDF
 #import base64
@@ -359,11 +359,6 @@ def fix_names(df):
 @st.cache_data
 def load_all_data():
 
-    ### LOAD FILES
-    
-    #sod_ss = 'MASTER DATA 2.17.25.xlsx'
-    #sod_ss = 'SOD 7.1.25.xlsx'
-    
     
     hist_ss = 'data/Files/CC Historical Sales 2.7.xlsx'
     
