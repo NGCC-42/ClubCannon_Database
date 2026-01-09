@@ -120,7 +120,7 @@ def main():
     # ----------------
 
     image = Image.open('data/Images/Magic_FX_Logo_PNG@10x.png')
-    col1, col2, col3 = st.columns([1,2,1])
+    col1, col2, col3 = st.columns([1.25,1.5,1.25])
     col2.image(image, 
             use_container_width=True)
 
