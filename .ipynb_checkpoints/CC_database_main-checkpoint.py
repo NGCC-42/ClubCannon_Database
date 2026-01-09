@@ -25,7 +25,7 @@ import base64
 from data.load import load_all_data
 from modules.customer_details import render_customer
 from modules.leaderboards import render_leaderboards
-from modules.leaderboards import render_customer_spend_leaderboard
+#from modules.leaderboards import render_customer_spend_leaderboard
 
 from logic.analytics import (
     percent_of_change, 
@@ -119,7 +119,7 @@ def main():
     # SET HEADER IMAGE
     # ----------------
 
-    image = Image.open('data/Images/Magic FX Logo - PNG@10x.png')
+    image = Image.open('data/Images/Magic_FX_Logo_PNG@10x.png')
     col1, col2, col3 = st.columns([1,2,1])
     col2.image(image, 
             use_container_width=True)
@@ -165,7 +165,7 @@ def main():
     """, unsafe_allow_html=True)
     
     with st.sidebar:
-        task_choice = option_menu(None, ["Dashboard", "Product Reports", "Customer Details", "Leaderboards", "Customer Spending"], 
+        task_choice = option_menu(None, ["Dashboard", "Product Reports", "Customer Details", "Leaderboards"], 
             icons=['house', 'projector', 'person-circle', 'trophy'], 
             menu_icon="cast", default_index=0, orientation="vertical",
             styles={
