@@ -51,7 +51,7 @@ def plot_bar_chart_hh(df):
         x=alt.X('Years', sort=None).title('Year'),
         y='Handheld Sales',
     ).properties(height=800, width=1150).configure_mark(
-        color='limegreen'
+        color='red'
     ))
 
 
@@ -83,7 +83,7 @@ def plot_bar_chart(df):
         x=alt.X('Months', sort=None).title('Month'),
         y='Units Sold',
     ).properties(height=500, width=750).configure_mark(
-        color='limegreen'
+        color='red'
     ))
 
 
@@ -102,9 +102,9 @@ def display_daily_plot(month, years=['All']):
 
     if years == ['All']:
     
-        ax.plot(x, daily23, label='2023', color='darkgreen', linewidth=2)
+        ax.plot(x, daily23, label='2023', color='gray', linewidth=2)
         ax.plot(x, daily24, label='2024', color='white', linewidth=2)
-        ax.plot(x, daily25, label='2025', color='limegreen', linewidth=2)
+        ax.plot(x, daily25, label='2025', color='red', linewidth=2)
         ax.set_facecolor('#000000')
         fig.set_facecolor('#000000')
         plt.yticks([1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000])
@@ -123,7 +123,7 @@ def display_daily_plot(month, years=['All']):
 
     elif years == ['2025']:
         
-        ax.plot(x, daily25, label='2025', color='limegreen', linewidth=2)
+        ax.plot(x, daily25, label='2025', color='red', linewidth=2)
         ax.set_facecolor('#000000')
         fig.set_facecolor('#000000')
         plt.yticks([1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000])
@@ -131,7 +131,7 @@ def display_daily_plot(month, years=['All']):
         plt.tick_params(axis='x', colors='white')
         plt.tick_params(axis='y', colors='white')
         plt.ylim(0, 20000)
-        plt.fill_between(x, daily25, color='limegreen')
+        plt.fill_between(x, daily25, color='red')
         #plt.title('Annual Comparison', color='green')
         plt.figure(figsize=(10,10))
     
@@ -141,7 +141,7 @@ def display_daily_plot(month, years=['All']):
         
     elif years == ['2024']:
         
-        ax.plot(x, daily24, label='2024', color='limegreen', linewidth=2)
+        ax.plot(x, daily24, label='2024', color='red', linewidth=2)
         ax.set_facecolor('#000000')
         fig.set_facecolor('#000000')
         plt.yticks([1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000])
@@ -149,7 +149,7 @@ def display_daily_plot(month, years=['All']):
         plt.tick_params(axis='x', colors='white')
         plt.tick_params(axis='y', colors='white')
         plt.ylim(0, 20000)
-        plt.fill_between(x, daily24, color='limegreen')
+        plt.fill_between(x, daily24, color='red')
         #plt.title('Annual Comparison', color='green')
         plt.figure(figsize=(10,10))
     
@@ -159,7 +159,7 @@ def display_daily_plot(month, years=['All']):
 
     elif years == ['2023']:
         
-        ax.plot(x, daily23, label='2023', color='limegreen', linewidth=2)
+        ax.plot(x, daily23, label='2023', color='red', linewidth=2)
         ax.set_facecolor('#000000')
         fig.set_facecolor('#000000')
         plt.yticks([1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000])
@@ -167,7 +167,7 @@ def display_daily_plot(month, years=['All']):
         plt.tick_params(axis='x', colors='white')
         plt.tick_params(axis='y', colors='white')
         plt.ylim(0, 20000)
-        plt.fill_between(x, daily23, color='limegreen')
+        plt.fill_between(x, daily23, color='red')
         #plt.title('Annual Comparison', color='green')
         plt.figure(figsize=(10,10))
     
@@ -205,7 +205,7 @@ def plot_bar_chart_ms(df):
         x=alt.X('Months', sort=None).title('Month'),
         y='Total Sales',
     ).properties(height=500, width=700).configure_mark(
-        color='limegreen'
+        color='red'
     ))
 
 
@@ -218,7 +218,7 @@ def plot_bar_chart_ms_comp(df):
         x=alt.X('Months', sort=None).title('Month'),
         y='Total Sales',
     ).properties(height=500, width=350).configure_mark(
-        color='limegreen'
+        color='red'
     ))
 
 
@@ -266,7 +266,7 @@ def format_for_line_graph(dict1, product, dict2=None, key=0):
         
 def display_pie_chart_comp(df):
     col1, col2 = st.columns(2)
-    colors = ["rgb(115, 255, 165)", "rgb(88, 92, 89)", "rgb(7, 105, 7)", "rgb(0, 255, 0"]
+    colors = ["rgb(235, 28, 37)", "rgb(255, 255, 255)", "rgb(66, 66, 66)", "rgb(214, 0, 255"]
     with col1:
         saleFig = px.pie(format_for_pie_chart(df), values='Totals', names='Product', title='Units', height=400, width=400)
         saleFig.update_layout(margin=dict(l=10, r=10, t=20, b=0))
@@ -309,7 +309,7 @@ def plot_annual_comparison(x, years_to_plot='2025', col1=None, series_by_year=No
     }
 
     # Define corresponding colors
-    colors = ['limegreen', 'white', 'grey']
+    colors = ['red', 'white', 'grey']
 
     # Retrieve year labels based on selection
     selected_years = year_series.get(years_to_plot, ['2022', '2023', '2024'])
@@ -384,7 +384,7 @@ def plot_bar_chart_product(df, prod_label):
         x=alt.X('Years', sort=None).title('Year'),
         y=prod_label,
     ).properties(height=800, width=1400).configure_mark(
-        color='limegreen'
+        color='red'
     ))
 
 

@@ -560,16 +560,16 @@ def render_products(product_ctx, wholesale_list, bom_cost_jet, bom_cost_control,
                 cola, colb, colc, cold = st.columns(4, gap='medium')
     
                 cola.subheader('Pro Jet')
-                cola.metric('{:.1f}% of Total Revenue'.format((prodTot25['jet']['Pro Jet'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['jet']['Pro Jet'][0])), int(prodTot25['jet']['Pro Jet'][0] - pj_td24))
+                cola.metric('{:.1f}% of Total Revenue'.format((prodTot25['jet']['Pro Jet'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['jet']['Pro Jet'][0])), int(prodTot25['jet']['Pro Jet'][0] - prodTot24['jet']['Pro Jet'][0]))
     
                 colb.subheader('Quad Jet')
-                colb.metric('{:.1f}% of Total Revenue'.format((prodTot25['jet']['Quad Jet'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['jet']['Quad Jet'][0])), int(prodTot25['jet']['Quad Jet'][0] - qj_td24))
+                colb.metric('{:.1f}% of Total Revenue'.format((prodTot25['jet']['Quad Jet'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['jet']['Quad Jet'][0])), int(prodTot25['jet']['Quad Jet'][0] - prodTot24['jet']['Quad Jet'][0]))
     
                 colc.subheader('Micro Jet')
-                colc.metric('{:.1f}% of Total Revenue'.format((prodTot25['jet']['Micro Jet'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['jet']['Micro Jet'][0])), int(prodTot25['jet']['Micro Jet'][0] - mj_td24))
+                colc.metric('{:.1f}% of Total Revenue'.format((prodTot25['jet']['Micro Jet'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['jet']['Micro Jet'][0])), int(prodTot25['jet']['Micro Jet'][0] - prodTot24['jet']['Micro Jet'][0]))
     
                 cold.subheader('Cryo Clamp')
-                cold.metric('{:.1f}% of Total Revenue'.format((prodTot25['jet']['Cryo Clamp'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['jet']['Cryo Clamp'][0])), int(prodTot25['jet']['Cryo Clamp'][0] - cc_td24))
+                cold.metric('{:.1f}% of Total Revenue'.format((prodTot25['jet']['Cryo Clamp'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['jet']['Cryo Clamp'][0])), int(prodTot25['jet']['Cryo Clamp'][0] - prodTot24['jet']['Cryo Clamp'][0]))
 
                 prod_profit_PJ, profit_per_unit_PJ, prod_profit_last_PJ, avg_price_PJ, avg_price_last_PJ, wholesale_sales_PJ, wholesale_percentage_PJ, wholesale_delta_PJ = calc_prod_metrics(prodTot25['jet'], 'Pro Jet', bom_cost_jet, prodTot24['jet'])
                 prod_profit_QJ, profit_per_unit_QJ, prod_profit_last_QJ, avg_price_QJ, avg_price_last_QJ, wholesale_sales_QJ, wholesale_percentage_QJ, wholesale_delta_QJ = calc_prod_metrics(prodTot25['jet'], 'Quad Jet', bom_cost_jet, prodTot24['jet'])
@@ -1043,11 +1043,11 @@ def render_products(product_ctx, wholesale_list, bom_cost_jet, bom_cost_control,
                 cola, colb, colc = st.columns(3)
                 
                 cola.subheader('The Button')
-                cola.metric('{:.1f}% of Total Revenue'.format((prodTot25['control']['The Button'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['control']['The Button'][0])), int(prodTot25['control']['The Button'][0] - tb_td24))
+                cola.metric('{:.1f}% of Total Revenue'.format((prodTot25['control']['The Button'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['control']['The Button'][0])), int(prodTot25['control']['The Button'][0] - prodTot24['control']['The Button'][0]))
                 colb.subheader('Shostarter')
-                colb.metric('{:.1f}% of Total Revenue'.format((prodTot25['control']['Shostarter'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['control']['Shostarter'][0])), int(prodTot25['control']['Shostarter'][0] - ss_td24))
+                colb.metric('{:.1f}% of Total Revenue'.format((prodTot25['control']['Shostarter'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['control']['Shostarter'][0])), int(prodTot25['control']['Shostarter'][0] - prodTot24['control']['Shostarter'][0]))
                 colc.subheader('Shomaster')
-                colc.metric('{:.1f}% of Total Revenue'.format((prodTot25['control']['Shomaster'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['control']['Shomaster'][0])), int(prodTot25['control']['Shomaster'][0] - sm_td24))
+                colc.metric('{:.1f}% of Total Revenue'.format((prodTot25['control']['Shomaster'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['control']['Shomaster'][0])), int(prodTot25['control']['Shomaster'][0] - prodTot24['control']['Shomaster'][0]))
     
                 prod_profit_TB, profit_per_unit_TB, prod_profit_last_TB, avg_price_TB, avg_price_last_TB, wholesale_sales_TB, wholesale_percentage_TB, wholesale_delta_TB = calc_prod_metrics(prodTot25['control'], 'The Button', bom_cost_control, prodTot24['control'])
                 prod_profit_SS, profit_per_unit_SS, prod_profit_last_SS, avg_price_SS, avg_price_last_SS, wholesale_sales_SS, wholesale_percentage_SS, wholesale_delta_SS = calc_prod_metrics(prodTot25['control'], 'Shostarter', bom_cost_control, prodTot24['control'])
@@ -1474,16 +1474,16 @@ def render_products(product_ctx, wholesale_list, bom_cost_jet, bom_cost_control,
                 cola, colb, colc, cold = st.columns(4)
         
                 cola.subheader('8FT NC')
-                cola.metric('{:.1f}% of Total Revenue'.format((prodTot25['handheld']['8FT - No Case'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['handheld']['8FT - No Case'][0])), '{}'.format(int(prodTot25['handheld']['8FT - No Case'][0] - td_8nc24)))
+                cola.metric('{:.1f}% of Total Revenue'.format((prodTot25['handheld']['8FT - No Case'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['handheld']['8FT - No Case'][0])), '{}'.format(int(prodTot25['handheld']['8FT - No Case'][0] - prodTot24['handheld']['8FT - No Case'][0])))
                 cola.metric('', '${:,}'.format(int(prodTot25['handheld']['8FT - No Case'][1])), percent_of_change(convert_prod_select('8FT - No Case', 2025), prodTot25['handheld']['8FT - No Case'][1]))
                 colb.subheader('8FT TC')
-                colb.metric('{:.1f}% of Total Revenue'.format((prodTot25['handheld']['8FT - Travel Case'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['handheld']['8FT - Travel Case'][0])),  '{}'.format(int(prodTot25['handheld']['8FT - Travel Case'][0] - td_8tc24)))
+                colb.metric('{:.1f}% of Total Revenue'.format((prodTot25['handheld']['8FT - Travel Case'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['handheld']['8FT - Travel Case'][0])),  '{}'.format(int(prodTot25['handheld']['8FT - Travel Case'][0] - prodTot24['handheld']['8FT - Travel Case'][0])))
                 colb.metric('', '${:,}'.format(int(prodTot25['handheld']['8FT - Travel Case'][1])), percent_of_change(convert_prod_select('8FT - Travel Case', 2025), prodTot25['handheld']['8FT - Travel Case'][1]))
                 colc.subheader('15FT NC')
-                colc.metric('{:.1f}% of Total Revenue'.format((prodTot25['handheld']['15FT - No Case'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['handheld']['15FT - No Case'][0])),  '{}'.format(int(prodTot25['handheld']['15FT - No Case'][0] - td_15nc24)))
+                colc.metric('{:.1f}% of Total Revenue'.format((prodTot25['handheld']['15FT - No Case'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['handheld']['15FT - No Case'][0])),  '{}'.format(int(prodTot25['handheld']['15FT - No Case'][0] - prodTot24['handheld']['15FT - No Case'][0])))
                 colc.metric('', '${:,}'.format(int(prodTot25['handheld']['15FT - No Case'][1])), percent_of_change(convert_prod_select('15FT - No Case', 2025), prodTot25['handheld']['15FT - No Case'][1]))
                 cold.subheader('15FT TC')
-                cold.metric('{:.1f}% of Total Revenue'.format((prodTot25['handheld']['15FT - Travel Case'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['handheld']['15FT - Travel Case'][0])),  '{}'.format(int(prodTot25['handheld']['15FT - Travel Case'][0] - td_15tc24)))
+                cold.metric('{:.1f}% of Total Revenue'.format((prodTot25['handheld']['15FT - Travel Case'][1] / td_25_tot) * 100), '{}'.format(int(prodTot25['handheld']['15FT - Travel Case'][0])),  '{}'.format(int(prodTot25['handheld']['15FT - Travel Case'][0] - prodTot24['handheld']['15FT - Travel Case'][0])))
                 cold.metric('', '${:,}'.format(int(prodTot25['handheld']['15FT - Travel Case'][1])), percent_of_change(convert_prod_select('15FT - Travel Case', 2025), prodTot25['handheld']['15FT - Travel Case'][1]))
     
     

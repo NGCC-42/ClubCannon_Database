@@ -25,9 +25,9 @@ from streamlit_option_menu import option_menu
 def style_metric_cards(
     background_color: str = "#000000",
     border_size_px: int = 1.5,
-    border_color: str = "#00FF00",
+    border_color: str = "#EB1C25",
     border_radius_px: int = 5,
-    border_left_color: str = "#00FF00",
+    border_left_color: str = "#EB1C25",
     box_shadow: bool = True,
 ) -> None:
     """

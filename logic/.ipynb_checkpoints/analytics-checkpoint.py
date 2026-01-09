@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta, date
 import openpyxl
 import streamlit_shadcn_ui as ui
-from streamlit_extras.metric_cards import style_metric_cards
+#from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_option_menu import option_menu
 #from fpdf import FPDF
 #import base64
@@ -45,6 +45,24 @@ years = ['2022', '2023', '2024', '2025', '2026']
 
 df, df_quotes, df_cogs, df_shipstat_23, df_shipstat_24, df_qb, df_hsd, df_hist, unique_customer_list, master_customer_list, wholesale_list = load_all_data()
 
+
+# ----------------------------
+# HELPER FUNCTION - VERIFY INT
+# ----------------------------
+
+def safe_int(x, default=0) -> int:
+    if x is None:
+        return default
+    if isinstance(x, str):
+        x = x.strip()
+        if x == "":
+            return default
+        # optional: remove commas
+        x = x.replace(",", "")
+    try:
+        return int(float(x))
+    except (ValueError, TypeError):
+        return default
 
 # --------------------------------------------------
 # DEFINE A FUNCTION TO CALCULATE AND DISPLAY A DELTA
@@ -795,16 +813,27 @@ def hist_cust_data(customer):
     
     spending_total = sum(spending_dict.values())
 
-    idx = 0 
+    idx = 0
     for sale in cust_filtered.order_date:
         for prod in cust_products.keys():
-            #st.write(cust_filtered.iloc[idx][prod])
-            if cust_filtered.iloc[idx][prod] not in [0, None, 'NaN']:
-                
-                cust_products[prod][0] += int(cust_filtered.iloc[idx][prod])
-                cust_products[prod][1].append((int(cust_filtered.iloc[idx][prod]), str(cust_filtered.iloc[idx].order_date.date())))
-                
-
+            raw = cust_filtered.iloc[idx][prod]
+    
+            # Skip real NaNs / None
+            if raw is None or (isinstance(raw, float) and np.isnan(raw)) or pd.isna(raw):
+                continue
+    
+            # Skip blank / whitespace strings
+            if isinstance(raw, str) and raw.strip() == "":
+                continue
+    
+            qty = safe_int(raw)  # <- your helper
+    
+            if qty == 0:
+                continue
+    
+            cust_products[prod][0] += qty
+            cust_products[prod][1].append((qty, str(cust_filtered.iloc[idx].order_date.date())))
+    
         idx += 1
 
     # CONVERT TO READABLE NAMES

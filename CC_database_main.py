@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title='Club Cannon Database', 
+st.set_page_config(page_title='Magic FX USA', 
            page_icon='data/Images/club-cannon-icon-black.png',
                    layout='wide',
            initial_sidebar_state='collapsed')
@@ -20,11 +20,12 @@ import streamlit_shadcn_ui as ui
 #from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_option_menu import option_menu
 #from fpdf import FPDF
-#import base64
+import base64
 
 from data.load import load_all_data
 from modules.customer_details import render_customer
 from modules.leaderboards import render_leaderboards
+from modules.leaderboards import render_customer_spend_leaderboard
 
 from logic.analytics import (
     percent_of_change, 
@@ -117,9 +118,9 @@ def main():
     # ----------------
     # SET HEADER IMAGE
     # ----------------
-    
-    image = Image.open('data/Images/club-cannon-logo-bbb.png')
-    col1, col2, col3 = st.columns(3)
+
+    image = Image.open('data/Images/Magic_FX_Logo_PNG@10x.png')
+    col1, col2, col3 = st.columns([1,2,1])
     col2.image(image, 
             use_container_width=True)
 
@@ -164,14 +165,14 @@ def main():
     """, unsafe_allow_html=True)
     
     with st.sidebar:
-        task_choice = option_menu(None, ["Dashboard", "Product Reports", "Customer Details", "Leaderboards"], 
+        task_choice = option_menu(None, ["Dashboard", "Product Reports", "Customer Details", "Leaderboards", "Customer Spending"], 
             icons=['house', 'projector', 'person-circle', 'trophy'], 
             menu_icon="cast", default_index=0, orientation="vertical",
             styles={
                 "container": {"padding": "0!important"},
-                "icon": {"color": "limegreen", "font-size": "18px"}, 
+                "icon": {"color": "red", "font-size": "18px"}, 
                 "nav-link": {"color": "white", "font-size": "22px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-                "nav-link-selected": {"background-color": "limegreen"},
+                "nav-link-selected": {"background-color": "gray"},
                 }
             )
     
@@ -323,6 +324,10 @@ def main():
         # RENDER LEADERBOARDS 
         # -------------------
         render_leaderboards()
+
+    if task_choice == 'Customer Spending':
+
+        render_customer_spend_leaderboard(df, df_qb, master_customer_list)
     
 
     

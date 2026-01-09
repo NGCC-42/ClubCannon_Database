@@ -11,16 +11,17 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import openpyxl
 import streamlit_shadcn_ui as ui
-from streamlit_extras.metric_cards import style_metric_cards
+#from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_option_menu import option_menu
 #from fpdf import FPDF
 #import base64
+from io import BytesIO
 
 from data.load import load_all_data
 from ui.components import style_metric_cards
 from logic.analytics import percent_of_change
 from logic.leaderboard_logic import get_customer_spend_by_year
-
+from logic.customer_logic import compute_customer_details
 
 # --------------------
 # MAKE DATA ACCESSIBLE
@@ -116,7 +117,75 @@ def render_leaderboards():
         style_metric_cards()
 
 
+def build_customer_spend_leaderboard(df, df_qb, master_customer_list) -> pd.DataFrame:
+    rows = []
 
+    for cust in master_customer_list:
+        data = compute_customer_details(df, df_qb, cust)
+        if not data:
+            continue
+
+        total = float(data.get("total_spending_all", 0) or 0)
+
+        # year_metrics: [(year, spend, delta), ...]
+        year_metrics = data.get("year_metrics", []) or []
+        year_spend = {int(y): float(s or 0) for (y, s, _delta) in year_metrics}
+
+        # "Active years" = years with > 0 spend (recommended)
+        active_years = sorted([y for y, s in year_spend.items() if s > 0])
+
+        if active_years:
+            first_year = min(active_years)
+            last_year = max(active_years)
+            years_active = len(active_years)
+            avg_annual = total / years_active
+        else:
+            first_year = None
+            last_year = None
+            years_active = 0
+            avg_annual = 0
+
+        rows.append(
+            {
+                "Customer": cust,
+                "Lifetime Spend": total,
+                "Avg Annual Spend (active years)": avg_annual,
+                "Active Years": years_active,
+                "First Active Year": first_year,
+                "Last Active Year": last_year,
+            }
+        )
+
+    out = pd.DataFrame(rows)
+    if out.empty:
+        return out
+
+    return out.sort_values("Lifetime Spend", ascending=False).reset_index(drop=True)
+
+
+def render_customer_spend_leaderboard(df, df_qb, master_customer_list):
+    st.subheader("Customers by Lifetime Spending")
+
+    leaderboard_df = build_customer_spend_leaderboard(df, df_qb, master_customer_list)
+
+    if leaderboard_df.empty:
+        st.info("No customer spend data found.")
+        return
+
+    st.dataframe(leaderboard_df, use_container_width=True)
+
+    # Excel export
+    buffer = BytesIO()
+    with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
+        leaderboard_df.to_excel(writer, index=False, sheet_name="Leaderboard")
+    buffer.seek(0)
+
+    st.download_button(
+        "Download Excel",
+        data=buffer,
+        file_name="customer_lifetime_spend_leaderboard.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
 
 
 
